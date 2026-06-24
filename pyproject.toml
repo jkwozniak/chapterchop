@@ -1,0 +1,100 @@
+# ============================================
+# PACKAGING
+# ============================================
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+name = "chapterchop"
+version = "0.1.0"
+description = "Offline audio chaptering library"
+authors = [
+    {name = "Jan Woźniak", email = "wozniakjanek@protonmail.com"}
+]
+license = "GPL-2.0-or-later"
+license-files = ["LICENSE"]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydub (>=0.25.1)"
+]
+
+include = [
+    { path = "src/chapterchop/py.typed", format = "file" }
+]
+
+[project.scripts]
+chapterchop = "chapterchop.cli.main:main"
+
+[tool.poetry]
+packages = [
+    { include = "chapterchop", from = "src" }
+]
+
+
+# ============================================
+# DEPENDENCY GROUPS
+# ============================================
+
+[dependency-groups]
+dev = [
+    "pre-commit (>=4.5.0,<5.0.0)",
+    "ruff (>=0.14.9,<0.15.0)",
+    "mypy (>=1.19.1,<2.0.0)"
+]
+test = [
+    "pytest (>=9.0.3,<10.0.0)",
+]
+
+
+# ============================================
+# DEVELOPMENT TOOLS
+# ============================================
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["chapterchop"]
+combine-as-imports = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.mypy]
+mypy_path = "src"
+files = ["src"] # Tests intentionally excluded from strict checking
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+warn_return_any = true
+warn_unused_ignores = true
+no_implicit_optional = true
+check_untyped_defs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+pretty = true
+show_error_codes = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]
+python_files = ["test_*.py"]
+addopts = "-q --disable-warnings --strict-markers"
+markers = [
+    "contract: contract tests for protocol compliance",
+    "unit: unit tests for specific implementations",
+]
+
+# for Pylance compatibility
+[tool.pyright]
+extraPaths = ["src", "tests"]
