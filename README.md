@@ -45,7 +45,7 @@ You might find this tool useful if you:
 ### Prerequisites
 
 - Python 3.11+
-- ffmpeg
+- [FFmpeg](https://www.ffmpeg.org/)
 
 
 ### Install Chapterchop
@@ -79,4 +79,4 @@ chapterchop split -i input_file.mp3 -o ~/Desktop/output_dir -p 5 -v
 
 ## License
 
-Released under the GPL-2.0-or-later license. See [LICENSE](LICENSE) for details.
+Released under the GPL-2.0-or-later license. See [LICENSE](https://github.com/jkwozniak/chapterchop/blob/main/LICENSE) for details.

@@ -14,7 +14,7 @@ ___
 
 # 1. Project overview
 
-Chapterchop is a Python tool designed to be used both as a package within more complex projects and as a standalone tool that can be run directly from the CLI.
+Chapterchop is designed to be used both as a package and as a standalone tool that can be run directly from the CLI.
 The project's architecture formally defines the core functionality of individual components through protocols, while leaving implementation details and algorithms to individual implementations. The application is modular, separating the responsibilities of individual components.
 
 The only system dependency that extends beyond the Python virtual environment is [FFmpeg](https://www.ffmpeg.org/).
@@ -74,7 +74,7 @@ AudioData -> Analyzer -> Cutter -> Writer
 
 1. Audio is loaded into an AudioData object.
 2. The selected Analyzer defines the boundaries of the audio division based on its algorithm and creates a list of Chapter objects that define individual segments. Each implementation of the Analyzer can use its own algorithm for determining chapters (e.g., dividing into equal parts, detecting silence, using internal MP3 chapter markers, etc.)
-3. Cutter creates a list of Segments based on the provided list of chapters and the source audio. The Segments contain separate instances of AudioData representing the specified sections. Different implementations of the component may vary in terms of the validation rules they use and the strictness of their coverage of the source audio segments (e.g., regarding gaps between tracks, overlapping tracks, etc.)
+3. Cutter creates a list of Segments based on the provided list of Chapters and the source audio. The Segments contain separate instances of AudioData representing the specified sections. Different implementations of the component may vary in terms of the validation rules they use and the strictness of their coverage of the source audio segments (e.g., regarding gaps between tracks, overlapping tracks, etc.)
 4. The selected Writer consumes a list of segments and stores audio data according to its implementation (e.g., writing individual files to a directory, writing to multiple directories, writing with compression, etc.)
 
 
@@ -82,26 +82,26 @@ AudioData -> Analyzer -> Cutter -> Writer
 
 ## AudioData
 
-**Language Construct:** typing.Protocol, @runtime_checkable
+**Language Construct:** typing.Protocol, runtime_checkable
 
 **Role:** Abstract representation of audio data.
 
-**Location:** chapterchop/audio/protocols.py
+**Location:** chapterchop/audio_data/protocols.py
 
 **API contract:**
 
 Contains:
-- `duration_ms -> int`
-- `channels -> int | None`
-- `sample_rate -> int | None`
+- @property: `duration_ms(self) -> int`
+- @property: `channels(self) -> int | None`
+- @property: `sample_rate(self) -> int | None`
 
 Performs:
 - `slice(start_ms: int, end_ms: int) -> Self`
 
 Semantic details:
-- start_ms is inclusive
-- end_ms is exclusive
-- 0 <= start_ms < end_ms <= duration_ms
+- `start_ms` is inclusive
+- `end_ms` is exclusive
+- 0 <= `start_ms` < `end_ms` <= `duration_ms`
 - invalid ranges should raise an appropriate exception
 
 **Optional features:**
@@ -109,26 +109,29 @@ Semantic details:
 Implementations do not have to, but may support data export functionality (see: [WritableAudioData](#writableaudiodata)).
 
 Implementations do not have to, but may provide convenience constructors for loading audio from files.
-When supported, to ensure consistency across implementations, the recommended API is::
+When supported, to ensure consistency across implementations, the recommended API is:
+```python
+    @classmethod
+    def from_file(cls, path: str | PathLike[str]) -> Self:
+        ...
+```
 
-        @classmethod
-        def from_file(cls, path: str | PathLike[str]) -> Self:
-            ...
+**Reference implementation:** PydubAudioData (chapterchop/audio_data/pydub.py)
 
+> For PydubAudioData, the project does not use the original [pydub](https://github.com/jiaaro/pydub), as it is no longer maintained. Instead, it relies on [pozalabs-pydub](https://github.com/pozalabs/pydub/), an actively maintained fork that ensures compatibility with newer versions of Python.
 
 **Notes:**
 
-The AudioData protocol specifies only the minimum requirements that an audio container must meet to be compatible with the other parts of the package. However, concrete AudioData implementations, in addition to the fields and methods defined by the protocol, must store audio data in an appropriate manner (e.g., for a PydubAudioData implementation using Pydub as the backend, the data container is the `pydub.AudioSegment` structure). To maintain the readability and predictability of the application, the content of AudioData is expected to be immutable, and any operations on the audio, in particular cutting, should result in the creation of new objects.
+The `AudioData` protocol specifies only the minimum requirements that an audio container must meet to be compatible with the other parts of the package. However, concrete `AudioData` implementations, in addition to the fields and methods defined by the protocol, must store audio data in an appropriate manner (e.g., for the `PydubAudioData` implementation the data container is the `pydub.AudioSegment` structure). To maintain the readability and predictability of the application, the content of `AudioData` is expected to be immutable, and any operations on the audio, in particular cutting, should result in the creation of new objects.
 
 
 ## WritableAudioData
-
 
 **Language Construct:** typing.Protocol, runtime_checkable
 
 **Role:** Optional capability for AudioData implementations that support exporting.
 
-**Location:** chapterchop/audio/protocols.py
+**Location:** chapterchop/audio_data/protocols.py
 
 **API contract:**
 
@@ -136,10 +139,8 @@ Performs:
 - `export(self, output_path: str | PathLike[str], format: str) -> None`
 
 Semantic details:
-- output_path specifies the full destination path
+- `output_path` specifies the full destination path
 - backend failure should raise exception
-
-**Notes:**
 
 
 ## Chapter
@@ -153,16 +154,16 @@ Semantic details:
 **API contract:**
 
 Contains:
-- start_ms: int
-- end_ms: int
-- title: str | None = None
-- metadata: dict[str, object] | None = None
+- `start_ms: int`
+- `end_ms: int`
+- `title: str | None = None`
+- `metadata: dict[str, object] | None = None`
 
 
 Semantic details:
-- start_ms is inclusive
-- end_ms is exclusive
-- 0 <= start_ms < end_ms
+- `start_ms` is inclusive
+- `end_ms` is exclusive
+- 0 <= `start_ms` < `end_ms`
 
 **Notes:**
 
@@ -181,8 +182,8 @@ Does not contain audio data.
 **API contract:**
 
 Contains:
-- audio: AudioData
-- chapter: Chapter
+- `audio: AudioData`
+- `chapter: Chapter`
 
 
 # 4. Component contracts
@@ -202,16 +203,15 @@ Performs:
 
 Semantic details:
 - may return empty list if no relevant segments are found
-- may raise `AnalyzerError` for input that is invalid or cannot be meaningfully analyzed.
+- may raise `AnalyzerError` for input that is invalid or cannot be meaningfully analyzed
 
 **Reference implementation:** EvenSplitAnalyzer (chapterchop/analyzers/even_split.py)
 
 **Notes:**
 
-Implementations may use arbitrary strategies (e.g. silence detection, fixed splits, external metadata) and may optionally attach additional chapter metadata such as titles or tags. Returned chapters have to be valid, i.e. 0 <= start_ms < end_ms <= audio.duration_ms.
+Implementations may use arbitrary strategies (e.g. silence detection, fixed splits, external metadata) and may optionally attach additional chapter metadata such as titles or tags. Returned chapters have to be valid, i.e. 0 <= `start_ms` < `end_ms` <= `audio.duration_ms`.
 The contract does not specify the detailed rules for dividing the audio into chapters, such as the number of chapters, full coverage of the audio material, the absence/presence of breaks between chapters, or overlapping chapters, which depend on the specific implementation.
-
-Although it is not formally required, implementations are encouraged to behave deterministically for identical input data and configuration.
+Implementations should behave deterministically for identical input data and configuration.
 
 
 ## Cutter
@@ -229,18 +229,18 @@ Performs:
 
 Semantic details:
 - each segment created contains audio corresponding to the portion specified by `chapter.start_ms` and `chapter.end_ms` in the original audio source material
-- each input Chapter results in exactly one Segment in output
-- should return [] if provided list of chapters is empty
+- each input `Chapter` results in exactly one `Segment` in output
+- the result is sorted by `chapter.start_ms`
+- should return `[]` if provided list of chapters is empty
 - may raise `CutterError` for invalid input
+
 
 **Reference implementation:** SimpleCutter (chapterchop/cutters/simple.py)
 
 **Notes:**
 
-The created Segments should preserve the order of the content from the source material; i.e. the returned list of Segments should be sorted by `chapter.start_ms`.
+Operation must not mutate the provided audio object or the list of chapter definitions.
 The contract does not specify the detailed validation rules. Handling of gaps or overlapping chapters is not guaranteed by the contract and depends on the implementation.
-
-Although it is not formally required, implementations are encouraged to behave deterministically for identical input data and configuration.
 
 
 ## Writer
@@ -256,16 +256,10 @@ Although it is not formally required, implementations are encouraged to behave d
 Performs:
 - `write(self, segments: list[Segment]) -> list[Path]`
 
-Contract guarantees:
+Semantic details:
 - creates one output file for each input `Segment`
 - returns a list of paths to the created output files
 - returns `[]` when provided with an empty segment list
-
-Implementations:
-- may define their own output format
-- may define their own filename generation strategy
-- may define their own directory layout
-- may define their own export configuration
 - may raise `WriterError` if exporting fails or the input data is invalid
 
 **Reference implementation:** `DirectoryWriter` (`chapterchop/writers/directory.py`)
@@ -273,10 +267,8 @@ Implementations:
 **Notes:**
 
 The `write` method does not receive export configuration parameters directly. Configuration should instead be stored in the `Writer` instance itself.
-
 Typical implementations are expected to use the `WritableAudioData.export` method and raise `WriterError` if `Segment.audio` does not implement the `WritableAudioData` protocol. However, this is not a strict protocol requirement, and alternative implementation strategies are allowed when justified by the design.
-
-Although not formally required, implementations are encouraged to behave deterministically for identical input data and configuration.
+Implementations are encouraged to behave deterministically for identical input data and configuration.
 
 
 ## Component compatibility
@@ -294,9 +286,7 @@ For this reason:
 * If a new implementation of a component does not work correctly with other currently available components, its creator should provide at least one set of implementations of the remaining components that could together create a functional data flow.
 
 
-
 # 5. Error model
-
 
 Chapterchop defines a small, explicit exception hierarchy centered around the `ChapterChopError` base class. The goal of the error model is to provide predictable public failure semantics while remaining independent from backend-specific exceptions.
 
@@ -479,7 +469,7 @@ Because most protocol semantics are expressed exclusively through docstrings, **
 **Note:** The `AudioData` protocol intentionally exposes only a minimal behavioral surface. Contract tests therefore validate only protocol-visible semantics, while backend-specific audio representation details are verified at the implementation level.
 
 Contract tests for a given component are defined in the file: `tests/plural-component-name/contract/test_component-name_contract.py` (for instance: `tests/analyzers/contract/test_analyzer_contract.py` for the `Analyzer` component).
-Parametrized fixtures, stored in `tests/support/fixtures/plural-component-name.py`, are used to automatically apply contract test cases to all registered implementations. These fixtures use the component factories defined in `tests/support/factories/plural-component-name.py`, which provide a unified instantiation interface across all implementations (see example below).
+Parametrized fixtures, stored in `tests/support/fixtures/plural-component-name.py` (for instance: `tests/support/fixtures/analyzers.py`), are used to automatically apply contract test cases to all registered implementations. These fixtures use the component factories defined in `tests/support/factories/plural-component-name.py` (for instance: `tests/support/factories/analyzers.py`), which provide a unified instantiation interface across all implementations (see example below).
 A given implementation is included in contract tests (and thus registered as available) by adding its factory function to the `COMPONENT-NAME_FACTORIES` list in the `tests/support/fixtures/plural-component-name.py` (see example below).
 To avoid code redundancy, simple contract fixtures are typically generated from parametrized factory helpers (`tests/support/fixtures/helpers.py`). Implementations requiring pytest-managed runtime resources define their fixtures explicitly instead.
 
@@ -514,15 +504,15 @@ In the example above:
 
 ### Implementation tests
 
-Implementation-specific tests should be stored in: `tests/plural-component-name/implementation-name/test_implementation-name_component-name.py`.
-The implementation-specific component fixture is typically defined in the `tests/support/fixtures/plural-component-name.py`. However, when the fixture is only a wrapper for the constructor call, it could be placed directly in the test file.
+Implementation-specific tests should be stored in: `tests/plural-component-name/implementation-name/test_implementation-name_component-name.py` (for instance: `tests/analyzers/even_split/test_even_split_analyzer.py`).
+The implementation-specific component fixture is typically defined in the `tests/support/fixtures/plural-component-name.py` (for instance: `tests/support/fixtures/analyzers.py`). However, when the fixture is only a wrapper for the constructor call, it could be placed directly in the test file.
 
 **Example - `EvenSplitAnalyzer` implementation:**
 
 | Role                    | File                                                     |
 |-------------------------|----------------------------------------------------------|
 | Implementation source   | `chapterchop/analyzers/even_split.py`                    |
-| Contract tests          | `tests/analyzers/even_split/test_even_split_analyzer.py` |
+| Implementation tests    | `tests/analyzers/even_split/test_even_split_analyzer.py` |
 | Fixture                 | `tests/analyzers/even_split/test_even_split_analyzer.py` |
 
 `EvenSplitAnalyzer` fixture is just a basic constructor invocation:

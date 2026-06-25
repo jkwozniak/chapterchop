@@ -8,7 +8,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "chapterchop"
-version = "0.1.0"
+version = "0.1.0.rc2"
 description = "Offline audio chaptering library"
 authors = [
     {name = "Jan Woźniak", email = "wozniakjanek@protonmail.com"}
@@ -16,9 +16,9 @@ authors = [
 license = "GPL-2.0-or-later"
 license-files = ["LICENSE"]
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<4.0"
 dependencies = [
-    "pydub (>=0.25.1)"
+    "pozalabs-pydub (==0.43.0)"
 ]
 
 include = [

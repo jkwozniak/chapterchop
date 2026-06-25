@@ -48,7 +48,10 @@ def cmd_split(args: argparse.Namespace) -> int:
     if args.verbose:
         print("Writing output files...")
 
-    writer = DirectoryWriter(output_dir=args.output)
+    writer = DirectoryWriter(
+        output_dir=args.output,
+        format=args.format,
+    )
     paths = writer.write(segments=segments)
 
     if args.verbose:
@@ -112,12 +115,20 @@ def build_parser() -> argparse.ArgumentParser:
         help="Directory where output files will be written",
     )
     parser_split.add_argument(
+        "-f",
+        "--format",
+        type=str,
+        default="wav",
+        metavar="FORMAT",
+        help="Output audio format: 'wav' (default), 'mp3' or 'ogg'",
+    )
+    parser_split.add_argument(
         "-p",
         "--parts",
         type=int,
         default=4,
         metavar="N",
-        help="Number of equally sized chapters to be created",
+        help="Number of equally sized chapters to be created (default: 4)",
     )
     parser_split.add_argument(
         "-v",
