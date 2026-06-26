@@ -8,7 +8,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "chapterchop"
-version = "0.1.0.rc2"
+version = "0.1.0"
 description = "Offline audio chaptering library"
 authors = [
     {name = "Jan Woźniak", email = "wozniakjanek@protonmail.com"}
