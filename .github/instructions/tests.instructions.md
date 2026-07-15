@@ -1,3 +1,7 @@
+---
+applyTo: "tests/**/*.py"
+---
+
 # Testing Overview
 
 - The project uses pytest for unit testing.

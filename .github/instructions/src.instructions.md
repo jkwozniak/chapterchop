@@ -1,3 +1,7 @@
+---
+applyTo: "src/**/*.py"
+---
+
 # Production Code
 
 ## General

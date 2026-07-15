@@ -1,3 +1,7 @@
+---
+applyTo: "docs/**/*.md,README.md"
+---
+
 # Documentation Overview
 
 - Architecture is documented in docs/architecture.md.

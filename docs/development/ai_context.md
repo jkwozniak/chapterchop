@@ -2,13 +2,14 @@
 
 The Chapterchop project contains a set of instruction files intended for coding agents and AI assistants:
 ```
-.github
-├── AGENTS.md
-├── copilot-instructions.md
-└── instructions
-    ├── docs.instructions.md
-    ├── src.instructions.md
-    └── tests.instructions.md
+.
+├──AGENTS.md
+└──.github
+    ├── copilot-instructions.md
+    └── instructions
+        ├── docs.instructions.md
+        ├── src.instructions.md
+        └── tests.instructions.md
 ```
 These files provide stable project context shared across AI-assisted development tools. Their purpose is to help coding assistants produce changes that remain consistent with the project's architecture, coding conventions, and long-term design goals.
 
