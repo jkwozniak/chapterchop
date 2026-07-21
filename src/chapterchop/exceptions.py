@@ -21,6 +21,21 @@ class InvalidChapterError(ChapterChopError):
     """
 
 
+class InvalidChapterEntryError(ChapterChopError):
+    """
+    Raised when a chapter entry violates its invariants
+    (e.g. start_ms < 0 or title is an empty string).
+    """
+
+
+class InvalidChapterListError(ChapterChopError):
+    """
+    Raised when a chapter list violates its invariants
+    (e.g. entries are not sorted by start_ms 
+    or contain duplicate start_ms values).
+    """
+
+
 # ---------------------------------------------------------------------------
 # Processing constraint errors
 #
@@ -55,6 +70,13 @@ class NonFullCoverageError(ChapterChopError):
     ChapterGapError should be preferred when uncovered regions
     exist between chapters rather than at the beginning or end
     of the audio.
+    """
+
+
+class ChapterListOutOfBoundsError(ChapterChopError):
+    """
+    Raised when ChapterList contains at least one ChapterEntry
+    whose start_ms value exceeds the length of the source audio.
     """
 
 
