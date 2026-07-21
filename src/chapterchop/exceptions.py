@@ -75,8 +75,8 @@ class NonFullCoverageError(ChapterChopError):
 
 class ChapterListOutOfBoundsError(ChapterChopError):
     """
-    Raised when ChapterList contains at least one ChapterEntry
-    whose start_ms value exceeds the length of the source audio.
+    Raised when a chapter list contains one or more chapter entries
+    that start outside the source audio.
     """
 
 
