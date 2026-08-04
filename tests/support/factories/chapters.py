@@ -1,8 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2026 Jan Woźniak
 
-
 from chapterchop.models import Chapter
+
+# ---------------------------------------------------------------------------
+# Multi-purpose chapter factories
+# ---------------------------------------------------------------------------
 
 
 def make_chapter(
@@ -37,6 +40,11 @@ def make_chapters(
     return chapters
 
 
+# ---------------------------------------------------------------------------
+# Valid chapters
+# ---------------------------------------------------------------------------
+
+
 def make_full_coverage(duration: int) -> list[Chapter]:  # 2 chapters
     return [
         Chapter(0, duration // 2),
@@ -60,6 +68,39 @@ def make_single(duration: int) -> list[Chapter]:
     return [Chapter(0, duration)]
 
 
+# ---------------------------------------------------------------------------
+# Invalid chapters
+# ---------------------------------------------------------------------------
+
+
+def make_invalid_range() -> list[Chapter]:
+    return [Chapter(10, 5)]
+
+
+def make_out_of_bounds(duration: int) -> list[Chapter]:
+    return [Chapter(0, duration + 1)]
+
+
+# ---------------------------------------------------------------------------
+# Edge-cases
+# ---------------------------------------------------------------------------
+
+
+def make_duplicate_start(duration: int) -> list[Chapter]:
+    return [
+        Chapter(0, duration // 2),
+        Chapter(0, duration),
+    ]
+
+
+def make_missing_start_zero(duration: int) -> list[Chapter]:
+    return [Chapter(10, duration)]
+
+
+def make_not_full_coverage(duration: int) -> list[Chapter]:
+    return [Chapter(0, duration - 1)]
+
+
 def make_with_gap(duration: int) -> list[Chapter]:
     mid = duration // 2
 
@@ -74,26 +115,3 @@ def make_with_overlap(duration: int) -> list[Chapter]:
         Chapter(0, duration // 2 + 10),
         Chapter(duration // 2, duration),
     ]
-
-
-def make_duplicate_start(duration: int) -> list[Chapter]:
-    return [
-        Chapter(0, duration // 2),
-        Chapter(0, duration),
-    ]
-
-
-def make_invalid_range() -> list[Chapter]:
-    return [Chapter(10, 5)]
-
-
-def make_out_of_bounds(duration: int) -> list[Chapter]:
-    return [Chapter(0, duration + 1)]
-
-
-def make_missing_start_zero(duration: int) -> list[Chapter]:
-    return [Chapter(10, duration)]
-
-
-def make_not_full_coverage(duration: int) -> list[Chapter]:
-    return [Chapter(0, duration - 1)]

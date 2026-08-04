@@ -31,7 +31,7 @@ class InvalidChapterEntryError(ChapterChopError):
 class InvalidChapterListError(ChapterChopError):
     """
     Raised when a chapter list violates its invariants
-    (e.g. entries are not sorted by start_ms 
+    (e.g. entries are not sorted by start_ms
     or contain duplicate start_ms values).
     """
 
@@ -101,3 +101,10 @@ class WriterError(ChapterChopError):
 
 class AudioBackendError(ChapterChopError):
     """Raised when an audio backend returns invalid or inconsistent data."""
+
+
+class ClfParserError(ChapterChopError):
+    """
+    Raised when a CLF file content is not compliant
+    with the CLF specification.
+    """
