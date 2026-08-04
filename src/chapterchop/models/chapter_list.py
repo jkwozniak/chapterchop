@@ -3,16 +3,16 @@
 
 from dataclasses import dataclass
 
-from chapterchop.models.chapter_entry import ChapterEntry
+from .chapter_entry import ChapterEntry
 
 
 @dataclass(frozen=True, slots=True)
 class ChapterList:
     """
-    Logical representation of the external list of chapters 
+    Logical representation of the external list of chapters
     describing the content of an audio recording.
 
-    Serves as an alternative to audio analysis as a basis 
+    Serves as an alternative to audio analysis as a basis
     for determining chapter boundaries.
 
     Stores an immutable, sorted collection of ChapterEntry objects.
@@ -23,7 +23,7 @@ class ChapterList:
     - chapter entries are sorted in ascending order by start_ms
     - each chapter entry must have a unique start_ms value
     - instances violating the above invariants are considered invalid
-      and should raise InvalidChapterListError when constructed.
+      and should raise InvalidChapterListError when detected.
     """
-        
+
     entries: tuple[ChapterEntry, ...]

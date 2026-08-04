@@ -4,7 +4,7 @@
 import pytest
 from support.stubs.audio_data import AudioDataStub, FailingAudioDataStub
 
-from chapterchop.analyzers.even_split import EvenSplitAnalyzer
+from chapterchop.analyzers import EvenSplitAnalyzer
 from chapterchop.exceptions import AnalyzerError
 
 

@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2026 Jan Woźniak
 
-from chapterchop.analyzers.base import Analyzer
-from chapterchop.audio_data.protocols import AudioData
-from chapterchop.exceptions import AnalyzerError
-from chapterchop.models import Chapter
+from ..audio_data.protocols import AudioData
+from ..exceptions import AnalyzerError
+from ..models import Chapter
+from .base import Analyzer
 
 
 class EvenSplitAnalyzer(Analyzer):

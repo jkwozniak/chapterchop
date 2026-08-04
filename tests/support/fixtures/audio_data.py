@@ -5,8 +5,7 @@ from collections.abc import Callable
 
 import pytest
 
-from chapterchop.audio_data.protocols import AudioData
-from chapterchop.audio_data.pydub import PydubAudioData
+from chapterchop.audio_data import AudioData, PydubAudioData
 from tests.support.factories.audio_data import (
     make_pydub_audio_data,
 )

@@ -9,8 +9,8 @@ from typing import Self, cast
 from pydub import AudioSegment
 from pydub.exceptions import CouldntEncodeError
 
-from chapterchop.audio_data.protocols import AudioData
-from chapterchop.exceptions import AudioBackendError
+from ..exceptions import AudioBackendError
+from .protocols import AudioData
 
 
 class PydubAudioData(AudioData):

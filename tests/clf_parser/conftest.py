@@ -1,8 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2026 Jan Woźniak
 
-import sys
+from tests.support.fixtures.clf_assets import clf_asset
 
-from .cli.main import main
-
-sys.exit(main())
+__all__ = ["clf_asset"]

@@ -16,7 +16,7 @@ CLF is a plain-text file format used by Chapterchop to represent chapter boundar
 CLF is a UTF-8 encoded text file without a BOM with the structure described below.
 
 
-**Lexical conventions:**
+### Lexical conventions
 
 - **space**: ASCII space (0x20)
 - **digit**: any decimal digit (0–9)
@@ -26,7 +26,7 @@ CLF is a UTF-8 encoded text file without a BOM with the structure described belo
 - **CR**: carriage return (0x0D)
 
 
-**File structure (EBNF):**
+### File structure (EBNF)
 ```ebnf
 chapter-list = chapter-line ,                     (* at least one chapter is required *)
              { newline , chapter-line } ;         (* the remaining chapters are optional *)
@@ -49,7 +49,7 @@ separator = space                                 (* "timestamp title" *)
 title = title-character , { title-character } ;   (* at least one character is required *)
 ```
 
-**Semantic rules:**
+### Semantic rules
 
 - chapter timestamps are interpreted as chapter start positions,
 - the values for each unit of time (h/m/s) must be within the range of 0 to 59,
@@ -60,6 +60,26 @@ title = title-character , { title-character } ;   (* at least one character is r
 - blank lines are not permitted.
 
 > A conforming CLF parser is expected to normalize the input according to the semantic rules above before constructing a ChapterList.
+
+
+### Separator ambiguity
+
+The format defines two variants of the separator between the timestamp and the title:
+- short: ` ` (single space)
+- long: ` - ` (space, dash, space)
+
+Since a single space is a valid separator, any characters following the first space are treated as part of the chapter title, unless they form a long separator (" - ").
+
+For example:
+```
+0:15 ~ Chapter 1
+10:00 _ Chapter 2
+```
+
+are both valid CLF entries, but the titles become: `~ Chapter 1` and `_ Chapter 2` rather than `Chapter 1` and `Chapter 2`.
+
+Although the entries above do not violate the formal rules of the format, this type of notation can be misleading and is therefore discouraged.
+When using a long separator, always write it exactly as defined by the specification.
 
 
 ## Examples
@@ -127,6 +147,6 @@ title = title-character , { title-character } ;   (* at least one character is r
 -> 15:35 Chapter 2   # characters preceding the timestamp
                      # empty line
 20:00Chapter 3       # missing separator before the title
-30:30 >> Chapter 4   # invalid separator
+30:30>>Chapter 4     # invalid separator
 35:35-Chapter 5      # invalid separator
 ```

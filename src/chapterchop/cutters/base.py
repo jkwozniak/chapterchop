@@ -5,8 +5,8 @@ from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
 
-from chapterchop.audio_data.protocols import AudioData
-from chapterchop.models import Chapter, Segment
+from ..audio_data.protocols import AudioData
+from ..models import Chapter, Segment
 
 
 @runtime_checkable

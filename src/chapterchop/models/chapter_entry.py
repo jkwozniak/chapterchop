@@ -9,9 +9,9 @@ class ChapterEntry:
     """
     Logical representation of a single entry from an external chapter list.
 
-    Specifies the starting position, expressed in milliseconds, 
+    Specifies the starting position, expressed in milliseconds,
     of a logical chapter in the source audio material.
-    End positions are intentionally omitted and are derived later 
+    End positions are intentionally omitted and are derived later
     by components that interpret the surrounding ChapterList.
 
     A ChapterEntry has no complete meaning on its own.
@@ -20,8 +20,8 @@ class ChapterEntry:
     Semantic details:
     - start_ms >= 0
     - title is None or non-empty string
-    - instances violating the above invariants are considered invalid 
-      and should raise InvalidChapterEntryError when constructed.
+    - instances violating the above invariants are considered invalid
+      and should raise InvalidChapterEntryError when detected.
     """
 
     start_ms: int

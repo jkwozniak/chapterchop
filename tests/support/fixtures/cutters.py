@@ -3,7 +3,7 @@
 
 from collections.abc import Callable
 
-from chapterchop.cutters.base import Cutter
+from chapterchop.cutters import Cutter
 from tests.support.factories.cutters import (
     make_simple_cutter,
 )

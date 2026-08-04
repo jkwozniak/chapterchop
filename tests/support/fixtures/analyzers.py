@@ -3,7 +3,7 @@
 
 from collections.abc import Callable
 
-from chapterchop.analyzers.base import Analyzer
+from chapterchop.analyzers import Analyzer
 from tests.support.factories.analyzers import (
     make_even_split_analyzer,
 )

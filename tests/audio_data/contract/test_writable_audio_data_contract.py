@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from chapterchop.audio_data.protocols import WritableAudioData
+from chapterchop.audio_data import WritableAudioData
 
 # ============================================================
 # GENERAL CONTRACT COMPLIANCE
