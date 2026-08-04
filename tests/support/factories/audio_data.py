@@ -3,7 +3,7 @@
 
 from pydub import AudioSegment
 
-from chapterchop.audio_data.pydub import PydubAudioData
+from chapterchop.audio_data import PydubAudioData
 
 
 def make_pydub_audio_data() -> PydubAudioData:

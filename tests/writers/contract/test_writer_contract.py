@@ -11,7 +11,7 @@ from support.stubs.audio_data import (
 )
 
 from chapterchop.exceptions import WriterError
-from chapterchop.writers.base import Writer
+from chapterchop.writers import Writer
 from tests.support.factories.segments import (
     make_segments,
 )

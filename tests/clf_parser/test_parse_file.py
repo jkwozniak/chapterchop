@@ -3,7 +3,7 @@
 
 import pytest
 
-from chapterchop.clf_parser import ClfParser
+from chapterchop import ClfParser
 from chapterchop.exceptions import ClfParserError
 from tests.support.assets.registry import ClfAsset
 

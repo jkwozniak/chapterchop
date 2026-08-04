@@ -3,9 +3,8 @@
 
 from operator import attrgetter
 
-from chapterchop.audio_data.protocols import AudioData
-from chapterchop.cutters.base import Cutter
-from chapterchop.exceptions import (
+from ..audio_data.protocols import AudioData
+from ..exceptions import (
     ChapterGapError,
     ChapterOutOfBoundsError,
     ChapterOverlapError,
@@ -13,7 +12,8 @@ from chapterchop.exceptions import (
     InvalidChapterError,
     NonFullCoverageError,
 )
-from chapterchop.models import Chapter, Segment
+from ..models import Chapter, Segment
+from .base import Cutter
 
 
 class SimpleCutter(Cutter):

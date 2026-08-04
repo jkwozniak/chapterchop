@@ -12,7 +12,7 @@ from support.stubs.audio_data import (
 )
 
 from chapterchop.exceptions import WriterError
-from chapterchop.writers.directory import DirectoryWriter
+from chapterchop.writers import DirectoryWriter
 from tests.support.factories.segments import (
     make_segments,
     make_segments_mixed_writability,

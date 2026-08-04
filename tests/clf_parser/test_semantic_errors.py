@@ -3,7 +3,7 @@
 
 import pytest
 
-from chapterchop.clf_parser import ClfParser
+from chapterchop import ClfParser
 from chapterchop.exceptions import InvalidChapterListError
 from tests.support.factories.clf_texts import (
     make_invalid_non_increasing_timestamp_text,

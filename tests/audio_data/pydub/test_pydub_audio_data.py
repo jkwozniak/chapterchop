@@ -9,7 +9,7 @@ from pydub.exceptions import (
     CouldntEncodeError,
 )
 
-from chapterchop.audio_data.pydub import PydubAudioData
+from chapterchop.audio_data import PydubAudioData
 from chapterchop.exceptions import AudioBackendError
 from tests.support.assets.path_resolver import resolve
 from tests.support.assets.registry import AudioAsset

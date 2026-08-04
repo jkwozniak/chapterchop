@@ -5,13 +5,13 @@ import re
 from os import PathLike
 from pathlib import Path
 
-from chapterchop.exceptions import (
+from .exceptions import (
     ClfParserError,
     InvalidChapterEntryError,
     InvalidChapterListError,
 )
-from chapterchop.models.chapter_entry import ChapterEntry
-from chapterchop.models.chapter_list import ChapterList
+from .models.chapter_entry import ChapterEntry
+from .models.chapter_list import ChapterList
 
 
 class ClfParser:

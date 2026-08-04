@@ -7,11 +7,11 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import cast
 
-from chapterchop.analyzers.even_split import EvenSplitAnalyzer
-from chapterchop.audio_data.pydub import PydubAudioData
-from chapterchop.cutters.simple import SimpleCutter
-from chapterchop.exceptions import ChapterChopError
-from chapterchop.writers.directory import DirectoryWriter
+from ..analyzers.even_split import EvenSplitAnalyzer
+from ..audio_data.pydub import PydubAudioData
+from ..cutters.simple import SimpleCutter
+from ..exceptions import ChapterChopError
+from ..writers.directory import DirectoryWriter
 
 try:
     __version__ = version("chapterchop")

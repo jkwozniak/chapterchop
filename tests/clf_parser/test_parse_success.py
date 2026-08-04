@@ -3,9 +3,8 @@
 
 import pytest
 
-from chapterchop.clf_parser import ClfParser
-from chapterchop.models.chapter_entry import ChapterEntry
-from chapterchop.models.chapter_list import ChapterList
+from chapterchop import ClfParser
+from chapterchop.models import ChapterEntry, ChapterList
 from tests.support.factories.clf_texts import (
     make_valid_timestamp_only_text,
     make_valid_timestamp_with_titles_text,

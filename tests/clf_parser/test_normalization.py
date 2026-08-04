@@ -5,8 +5,8 @@ import textwrap
 
 import pytest
 
-from chapterchop.clf_parser import ClfParser
-from chapterchop.models.chapter_entry import ChapterEntry
+from chapterchop import ClfParser
+from chapterchop.models import ChapterEntry
 from tests.support.assets.registry import ClfAsset
 from tests.support.factories.clf_texts import (
     make_invalid_trailing_whitespace_text,

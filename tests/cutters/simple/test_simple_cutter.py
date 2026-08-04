@@ -3,7 +3,7 @@
 
 import pytest
 
-from chapterchop.cutters.simple import SimpleCutter
+from chapterchop.cutters import SimpleCutter
 from chapterchop.exceptions import (
     ChapterGapError,
     ChapterOutOfBoundsError,
