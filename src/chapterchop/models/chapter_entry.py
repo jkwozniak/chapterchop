@@ -21,7 +21,7 @@ class ChapterEntry:
     - start_ms >= 0
     - title is None or non-empty string
     - instances violating the above invariants are considered invalid
-      and shouldand should raise InvalidChapterEntryError when detected.
+      and should raise InvalidChapterEntryError when detected.
     """
 
     start_ms: int
