@@ -17,19 +17,19 @@ class EvenSplitAnalyzer(Analyzer):
     the remaining milliseconds are added to the final chapter.
 
     The implementation is fully deterministic and intended primarily as:
-    - a correctness baseline,
-    - a reference implementation of the Analyzer contract,
-    - a predictable component for testing and educational purposes.
+      - a correctness baseline,
+      - a reference implementation of the Analyzer contract,
+      - a predictable component for testing and educational purposes.
 
     Guarantees:
-    - returns a non-empty list of chapters
-    - chapters are contiguous and non-overlapping
-    - chapters fully cover the audio duration
-    - returned chapters are sorted by start_ms
-    - each chapter has a duration of at least 1 ms
+      - returns a non-empty list of chapters
+      - chapters are contiguous and non-overlapping
+      - chapters fully cover the audio duration
+      - returned chapters are sorted by start_ms
+      - each chapter has a duration of at least 1 ms
 
     Runtime validation:
-    - analyzed audio duration must be greater than 0
+      - analyzed audio duration must be greater than 0
 
     Not intended for real-world audio analysis.
     """
@@ -66,7 +66,7 @@ class EvenSplitAnalyzer(Analyzer):
         Analyze audio data and divide it into evenly sized chapters.
 
         Args:
-          - audio: Source audio data to analyze.
+          - audio (AudioData): Source audio data to analyze.
 
         Returns:
           - list[Chapter]: A list of contiguous Chapter objects covering
