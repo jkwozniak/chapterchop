@@ -75,6 +75,10 @@ class ChapterListAnalyzer(Analyzer):
                 )
             if entry.title == "":
                 raise InvalidChapterEntryError("Chapter entry title must not be empty.")
+            if entry.title is not None and type(entry.title) is not str:
+                raise InvalidChapterEntryError(
+                    "Chapter entry title must be str or None."
+                )
             if previous_start_ms is not None and entry.start_ms <= previous_start_ms:
                 raise InvalidChapterListError(
                     "Chapter entries must be sorted by start_ms "

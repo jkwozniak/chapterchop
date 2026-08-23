@@ -38,9 +38,15 @@ def test_init_accepts_chapter_list_whose_first_entry_does_not_start_at_zero() ->
 
 
 @pytest.mark.unit
-def test_init_rejects_invalid_chapter_entry() -> None:
+def test_init_rejects_chapter_entry_with_invalid_timestamp() -> None:
     with pytest.raises(InvalidChapterEntryError):
         ChapterListAnalyzer(make_chapter_list((-1, "Invalid")))
+
+
+@pytest.mark.unit
+def test_init_rejects_chapter_entry_with_invalid_title() -> None:
+    with pytest.raises(InvalidChapterEntryError):
+        ChapterListAnalyzer(make_chapter_list((0, 123)))  # pyright: ignore[reportArgumentType]
 
 
 @pytest.mark.unit
