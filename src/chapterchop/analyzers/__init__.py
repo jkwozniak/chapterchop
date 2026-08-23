@@ -2,6 +2,11 @@
 # Copyright (c) 2026 Jan Woźniak
 
 from .base import Analyzer
+from .chapter_list import ChapterListAnalyzer
 from .even_split import EvenSplitAnalyzer
 
-__all__ = ["Analyzer", "EvenSplitAnalyzer"]
+__all__ = [
+    "Analyzer",
+    "ChapterListAnalyzer",
+    "EvenSplitAnalyzer",
+]
