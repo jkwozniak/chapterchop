@@ -7,8 +7,11 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import cast
 
+from ..analyzers.base import Analyzer
+from ..analyzers.chapter_list import ChapterListAnalyzer
 from ..analyzers.even_split import EvenSplitAnalyzer
 from ..audio_data.pydub import PydubAudioData
+from ..clf_parser import ClfParser
 from ..cutters.simple import SimpleCutter
 from ..exceptions import ChapterChopError
 from ..writers.directory import DirectoryWriter
@@ -25,7 +28,10 @@ except PackageNotFoundError:
 
 def cmd_split(args: argparse.Namespace) -> int:
     if args.verbose:
-        print(f"Splitting {args.input} into {args.parts} parts")
+        if args.clf is not None:
+            print(f"Splitting {args.input} using chapters from {args.clf}")
+        else:
+            print(f"Splitting {args.input} into {args.parts} parts")
         print(f"Results will be written to the {args.output} directory")
 
     if args.verbose:
@@ -36,7 +42,12 @@ def cmd_split(args: argparse.Namespace) -> int:
     if args.verbose:
         print("Analyzing chapters...")
 
-    analyzer = EvenSplitAnalyzer(parts=args.parts)
+    analyzer: Analyzer
+    if args.clf is not None:
+        chapter_list = ClfParser().parse_file(path=args.clf)
+        analyzer = ChapterListAnalyzer(chapter_list=chapter_list)
+    else:
+        analyzer = EvenSplitAnalyzer(parts=args.parts)
     chapters = analyzer.analyze(audio=audio_data)
 
     if args.verbose:
@@ -122,13 +133,20 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="FORMAT",
         help="Output audio format: 'wav' (default), 'mp3' or 'ogg'",
     )
-    parser_split.add_argument(
+    chapter_source = parser_split.add_mutually_exclusive_group()
+    chapter_source.add_argument(
         "-p",
         "--parts",
         type=int,
         default=4,
         metavar="N",
         help="Number of equally sized chapters to be created (default: 4)",
+    )
+    chapter_source.add_argument(
+        "--clf",
+        type=Path,
+        metavar="PATH",
+        help="Path to the CLF file containing chapter information",
     )
     parser_split.add_argument(
         "-v",
