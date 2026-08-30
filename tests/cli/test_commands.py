@@ -69,7 +69,6 @@ def clf_workflow_args() -> argparse.Namespace:
         input=Path("input.mp3"),
         output=Path("output"),
         format="mp3",
-        parts=4,  # present but should be ignored when clf is set
         clf=Path("chapters.clf"),
         verbose=False,
     )
