@@ -68,7 +68,7 @@ Only documented protocols, domain models, and explicitly exported implementation
 
 ## Main workflow
 
-The main workflow is based on an analysis of the source audio material. 
+The main workflow is based on an analysis of the source audio material.
 The analysis method depends on the specific implementation of the `Analyzer` component used.
 
 The audio data is processed sequentially by successive system components according to the following scheme:
@@ -93,9 +93,9 @@ AudioData ──┐
             ├──> ChapterListAnalyzer ──> Cutter ──> Writer
 ClfParser ──┘
 ```
-`AudioData` and `ClfParser` are independent inputs to `ChapterListAnalyzer`.  
+`AudioData` and `ClfParser` are independent inputs to `ChapterListAnalyzer`.
 `ChapterList` object created by `ClfParser` is used to initialize the `ChapterListAnalyzer` instance, while `AudioData` is passed as an argument to the `analyze` method (just like in any other implementation of the `Analyzer` component).
- 
+
 `ChapterListAnalyzer` combines the relevant audio and chapter-definition information to produce chapters for downstream processing.
 
 
@@ -224,7 +224,7 @@ Semantic details:
 - `start_ms` >= 0
 - `start_ms` is inclusive
 - `title` is non-empty str or None
- 
+
 **Notes:**
 
 `start_ms` represents the beginning of a logical chapter rather than an arbitrary cut position.
@@ -247,10 +247,10 @@ Contains:
 Semantic details:
 - the elements of the `entries` tuple are sorted by `ChapterEntry.start_ms` in ascending order
 - `entries` contains `ChapterEntry` objects with different `start_ms` values, duplicates are not allowed
- 
+
 **Notes:**
 
-`ChapterList` provides a typical description of how audio is divided into chapters. 
+`ChapterList` provides a typical description of how audio is divided into chapters.
 For the CLF-based workflow, `ChapterList` provides chapter start positions and optional titles to `ChapterListAnalyzer`, which derives the resulting `Chapter` boundaries according to its implementation-specific rules.
 Regardless of the input data source (CLF file, external data importers, higher-level system components), all normalization and transformation must take place at an earlier stage, before the `ChapterList` is created. `ChapterList` is the final result of previous processing, once created it should not be modified.
 
@@ -579,7 +579,7 @@ tests/
 
 For each workflow component, there are two sets of unit tests - contract tests (common to all implementations of a given component) and tests specific to a particular implementation.
 
-**Note:** The exception is `ClfParser` (a parser for Chapter List Files), which is not extensible, has only one implementation, and does not define an abstract contract. 
+**Note:** The exception is `ClfParser` (a parser for Chapter List Files), which is not extensible, has only one implementation, and does not define an abstract contract.
 For this reason `ClfParser` has a single, extensive test suite.
 
 
