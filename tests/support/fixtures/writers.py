@@ -20,7 +20,7 @@ WRITER_FACTORIES: list[WriterFactory] = [
 
 DEFAULT_EXPORT_FORMAT = "wav"
 
-
+# basic writer fixture for contract tests
 @pytest.fixture(params=WRITER_FACTORIES)
 def writer(
     request: FixtureRequest,
@@ -30,6 +30,8 @@ def writer(
     return factory(path=tmp_path, format=DEFAULT_EXPORT_FORMAT)
 
 
+# additional fixture for DirectoryWriter implementation tests
+# allows to set a custom output path for selected test cases
 @pytest.fixture
 def directory_writer_factory(
     tmp_path: Path,

@@ -3,11 +3,12 @@ ___
 
 
 - [1. Project overview](#1-project-overview)
-- [2. Core processing pipeline](#2-core-processing-pipeline)
+- [2. Processing pipeline](#2-processing-pipeline)
 - [3. Data model](#3-data-model)
 - [4. Component contracts](#4-component-contracts)
-- [5. Error model](#5-error-model)
-- [6. Testing](#6-testing)
+- [5. CLI](#5-cli)
+- [6. Error model](#6-error-model)
+- [7. Testing](#7-testing)
 
 ___
 
@@ -29,9 +30,9 @@ Chapterchop is intended to:
 - process only offline audio data
 - act in a deterministic and repeatable manner
 - follow the protocol-first approach
-- provide practical utility
 - present a coherent and clear structure
 - maintain clean, modern, statically typed code
+- provide practical utility
 
 
 ## Non-goals
@@ -41,7 +42,6 @@ Chapterchop intentionally does not:
 - download media
 - stream audio
 - fetch remote metadata
-- orchestrate pipelines
 - provide plugin infrastructure
 
 
@@ -64,18 +64,39 @@ Operations such as slicing or exporting should not mutate existing AudioData ins
 Only documented protocols, domain models, and explicitly exported implementations should be considered stable public API.
 
 
-# 2. Core processing pipeline
+# 2. Processing pipeline
+
+## Main workflow
+
+The main workflow is based on an analysis of the source audio material. 
+The analysis method depends on the specific implementation of the `Analyzer` component used.
 
 The audio data is processed sequentially by successive system components according to the following scheme:
 
 ```
-AudioData -> Analyzer -> Cutter -> Writer
+AudioData ──> Analyzer ──> Cutter ──> Writer
 ```
 
-1. Audio is loaded into an AudioData object.
-2. The selected Analyzer defines the boundaries of the audio division based on its algorithm and creates a list of Chapter objects that define individual segments. Each implementation of the Analyzer can use its own algorithm for determining chapters (e.g., dividing into equal parts, detecting silence, using internal MP3 chapter markers, etc.)
-3. Cutter creates a list of Segments based on the provided list of Chapters and the source audio. The Segments contain separate instances of AudioData representing the specified sections. Different implementations of the component may vary in terms of the validation rules they use and the strictness of their coverage of the source audio segments (e.g., regarding gaps between tracks, overlapping tracks, etc.)
-4. The selected Writer consumes a list of segments and stores audio data according to its implementation (e.g., writing individual files to a directory, writing to multiple directories, writing with compression, etc.)
+1. Audio is loaded into an `AudioData` object.
+2. The selected `Analyzer` defines the boundaries of the audio division based on its algorithm and creates a list of `Chapter` objects that define individual segments. Each implementation of the `Analyzer` can use its own algorithm for determining chapters (e.g., dividing into equal parts, detecting silence, using internal MP3 chapter markers, etc.).
+3. Cutter creates a list of `Segment` objects based on the provided list of `Chapter` objects and the source audio. The `Segment` objects contain separate instances of `AudioData` representing the specified sections. Different implementations of the component may vary in terms of the validation rules they use and the strictness of their coverage of the source audio segments (e.g., regarding gaps between tracks, overlapping tracks, etc.).
+4. The selected `Writer` consumes a list of `Segment` objects and stores audio data according to its implementation (e.g., writing individual files to a directory, writing to multiple directories, writing with compression, etc.).
+
+
+## CLF-based workflow
+
+CLF (Chapter List File) is a text-based data format that describes the list of chapters within an audio file (see: [Chapter List File (CLF)](#chapter-list-file-clf)).
+
+The CLF-based workflow combines two independent inputs:
+```
+AudioData ──┐
+            ├──> ChapterListAnalyzer ──> Cutter ──> Writer
+ClfParser ──┘
+```
+`AudioData` and `ClfParser` are independent inputs to `ChapterListAnalyzer`.  
+`ChapterList` object created by `ClfParser` is used to initialize the `ChapterListAnalyzer` instance, while `AudioData` is passed as an argument to the `analyze` method (just like in any other implementation of the `Analyzer` component).
+ 
+`ChapterListAnalyzer` combines the relevant audio and chapter-definition information to produce chapters for downstream processing.
 
 
 # 3. Data model
@@ -159,7 +180,6 @@ Contains:
 - `title: str | None = None`
 - `metadata: dict[str, object] | None = None`
 
-
 Semantic details:
 - `start_ms` is inclusive
 - `end_ms` is exclusive
@@ -186,6 +206,76 @@ Contains:
 - `chapter: Chapter`
 
 
+## ChapterEntry
+
+**Language Construct:** dataclass
+
+**Role:** Immutable representation of a single entry from an external chapter list.
+
+**Location:** chapterchop/models/chapter_entry.py
+
+**API contract:**
+
+Contains:
+- `start_ms: int`
+- `title: str | None = None`
+
+Semantic details:
+- `start_ms` >= 0
+- `start_ms` is inclusive
+- `title` is non-empty str or None
+ 
+**Notes:**
+
+`start_ms` represents the beginning of a logical chapter rather than an arbitrary cut position.
+For the `title` field the value:`""` (empty string) is not allowed, it should be normalized to None instead.
+
+
+## ChapterList
+
+**Language Construct:** dataclass
+
+**Role:** Represents a typical chapter list describing the content of an audio recording.
+
+**Location:** chapterchop/models/chapter_list.py
+
+**API contract:**
+
+Contains:
+- `entries: tuple[ChapterEntry, ...]`
+
+Semantic details:
+- the elements of the `entries` tuple are sorted by `ChapterEntry.start_ms` in ascending order
+- `entries` contains `ChapterEntry` objects with different `start_ms` values, duplicates are not allowed
+ 
+**Notes:**
+
+`ChapterList` provides a typical description of how audio is divided into chapters. 
+For the CLF-based workflow, `ChapterList` provides chapter start positions and optional titles to `ChapterListAnalyzer`, which derives the resulting `Chapter` boundaries according to its implementation-specific rules.
+Regardless of the input data source (CLF file, external data importers, higher-level system components), all normalization and transformation must take place at an earlier stage, before the `ChapterList` is created. `ChapterList` is the final result of previous processing, once created it should not be modified.
+
+
+## Chapter List File (CLF)
+
+**Language Construct:** external file / data source
+
+**Role:** A plain-text data format designed to represent `ChapterList` data.
+
+**Specification:** docs/formats/clf-v1.md
+
+**Description:**
+
+Chapter List File (CLF) formalizes the syntax of a text file representing a typical list of tracks within an audio file, according to the following schema:
+```
+00:00 Intro
+03:18 Chapter 1
+08:22 Chapter 2
+15:49 Chapter 3
+20:11 Summary
+```
+See: [docs/formats/clf-v1.md](https://github.com/jkwozniak/chapterchop/blob/main/docs/formats/clf-v1.md) for details.
+
+
 # 4. Component contracts
 
 ## Analyzer
@@ -206,6 +296,9 @@ Semantic details:
 - may raise `AnalyzerError` for input that is invalid or cannot be meaningfully analyzed
 
 **Reference implementation:** EvenSplitAnalyzer (chapterchop/analyzers/even_split.py)
+
+**Other available implementations:**
+- ChapterListAnalyzer (chapterchop/analyzers/chapter_list.py)
 
 **Notes:**
 
@@ -282,11 +375,28 @@ For this reason:
 
 * Each new component implementation should contain a meaningful docstring description and clearly define valid input and output data.
 * Data validation should take place at component boundaries.
-* Individual implementations, besides contract tests, should have additional unit tests verifying their compliance with the declared behavior (see: [6. Testing](#6-testing)).
+* Individual implementations, besides contract tests, should have additional unit tests verifying their compliance with the declared behavior (see: [7. Testing](#7-testing)).
 * If a new implementation of a component does not work correctly with other currently available components, its creator should provide at least one set of implementations of the remaining components that could together create a functional data flow.
 
 
-# 5. Error model
+# 5. CLI
+
+The CLI acts as a thin application/orchestration layer over the library
+components.
+
+Its responsibilities include:
+
+- parsing command-line arguments,
+- selecting the appropriate workflow,
+- constructing workflow components,
+- passing configuration and intermediate results between components,
+- reporting processing information,
+- translating Chapterchop exceptions into CLI exit status.
+
+The CLI does not implement audio processing or domain logic.
+
+
+# 6. Error model
 
 Chapterchop defines a small, explicit exception hierarchy centered around the `ChapterChopError` base class. The goal of the error model is to provide predictable public failure semantics while remaining independent from backend-specific exceptions.
 
@@ -299,6 +409,9 @@ Domain model errors represent violations of domain model object invariants.
 These errors are independent from any specific backend or implementation detail.
 
 Examples include:
+* chapter entries with negative start positions,
+* unsorted chapter lists,
+* chapter lists containing duplicated chapter entries,
 * chapters with negative start positions,
 * chapters where `end_ms <= start_ms`.
 
@@ -311,6 +424,7 @@ This category represents violations of semantic constraints required by a specif
 
 Examples include:
 * chapters exceeding audio bounds,
+* chapter lists exceeding audio bounds,
 * presence of gaps between chapters,
 * presence of overlapping chapters,
 * lack of full audio coverage by chapter list.
@@ -334,6 +448,7 @@ Each major pipeline component exposes its own top-level exception type:
 * `AnalyzerError`
 * `CutterError`
 * `WriterError`
+* `ClfParserError`
 
 Audio backend and representation failures are exposed via:
 
@@ -364,7 +479,7 @@ This approach keeps the public error model deterministic and consistent while st
 The exception hierarchy may expand over time as new processing features and validation rules are introduced.
 
 
-# 6. Testing
+# 7. Testing
 
 The project uses `pytest` as the primary framework for automated testing.
 
@@ -374,6 +489,47 @@ The test suite is organized to clearly separate:
 * static test resources,
 * test case definitions.
 
+
+Simplified test directory tree:
+
+```
+tests/
+├── analyzers/
+│   ├── contract/
+│   ├── even_split/
+│   └── chapter_list/
+├── audio_data/
+│   ├── contract/
+│   └── pydub/
+├── cutters/
+│   ├── contract/
+│   └── simple/
+├── writers/
+│   ├── contract/
+│   └── directory/
+├── clf_parser/
+│   ├── test_parse_success.py
+│   ├── test_parse_file.py
+│   ├── test_syntax_errors.py
+│   └── ...
+├── cli/
+│   ├── test_parser.py
+│   └── test_commands.py
+├── assets/
+│   ├── audio/
+│   │   ├── corrupted/
+│   │   ├── silence/
+│   │   └── tone/
+│   └── clf/
+│       ├── invalid/
+│       └── valid/
+└── support/
+    ├── fixtures/
+    ├── factories/
+    ├── fakes/
+    ├── stubs/
+    └── assets/
+```
 
 ## Test Infrastructure
 
@@ -411,53 +567,20 @@ The project distinguishes between:
 * contract tests, which verify compliance with protocol-level guarantees,
 * and implementation tests, which verify behavior specific to a concrete implementation.
 
-
-Simplified test directory tree structure:
+This is reflected in the directory tree (conceptual scheme):
 ```
-tests
-├── analyzers
-│   ├── contract
-│   │   └── test_analyzer_contract.py
-│   ├── implementation_1
-│   │   └── test_implementation_1.py
-│   └── implementation_2
-│       └── test_implementation_2.py
-├── assets
-│   └── audio
-├── audio_data
-│   ├── contract
-│   │   └── test_audio_data_contract.py
-│   ├── implementation_1
-│   │   └── test_implementation_1.py
-│   └── implementation_2
-│       └── test_implementation_2.py
-├── cutters
-│   ├── contract
-│   │   └── test_cutter_contract.py
-│   ├── implementation_1
-│   │   └── test_implementation_1.py
-│   └── implementation_2
-│       └── test_implementation_2.py
-├── support
-│   ├── assets
-│   ├── factories
-│   ├── fakes
-│   ├── fixtures
-│   ├── helpers
-│   └── stubs
-└── writers
-    ├── contract
-    │   └── test_writer_contract.py
-    ├── implementation_1
-    │   └── test_implementation_1.py
-    └── implementation_2
-        └── test_implementation_2.py
+tests/
+└── <component>/
+    ├── contract/
+    └── <implementation>/
 ```
-
 
 ## Contract vs Implementation testing
 
-For each component, there are two sets of unit tests - contract tests (common to all implementations of a given component) and tests specific to a particular implementation.
+For each workflow component, there are two sets of unit tests - contract tests (common to all implementations of a given component) and tests specific to a particular implementation.
+
+**Note:** The exception is `ClfParser` (a parser for Chapter List Files), which is not extensible, has only one implementation, and does not define an abstract contract. 
+For this reason `ClfParser` has a single, extensive test suite.
 
 
 ### Contract tests
@@ -493,13 +616,14 @@ analyzer = simple_parametrized_fixture_factory(
 List of available `Analyzer` implementation factories (`tests/support/fixtures/analyzers.py`):
 ```
 ANALYZER_FACTORIES: list[AnalyzerFactory] = [
+    make_chapter_list_analyzer,
     make_even_split_analyzer,
 ]
 ```
 In the example above:
 * `analyzer` - a fixture name
 * `simple_parametrized_fixture_factory` - helper fixture factory (common for various components)
-* `make_even_split_analyzer` - component factory for `EvenSplitAnalyzer` (particular `Analyzer` implementation)
+* `make_chapter_list_analyzer`, `make_even_split_analyzer` - component factories for particular `Analyzer` implementations.
 
 
 ### Implementation tests
