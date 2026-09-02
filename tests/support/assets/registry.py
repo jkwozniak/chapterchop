@@ -40,3 +40,4 @@ class ClfAsset(TestAsset):
     INVALID_INCORRECT_LINE = "clf/invalid/incorrect_line.clf"
     INVALID_UTF8_WITH_BOM = "clf/invalid/utf8_with_bom.clf"
     INVALID_UTF8 = "clf/invalid/invalid_utf8.clf"
+    INVALID_ILLEGAL_LINE_SEPARATORS = "clf/invalid/illegal_line_separators.clf"

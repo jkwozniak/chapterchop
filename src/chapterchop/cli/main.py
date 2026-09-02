@@ -74,6 +74,20 @@ def cmd_split(args: argparse.Namespace) -> int:
 
 
 # ============================================================
+# VALIDATION
+# ============================================================
+
+
+def positive_int(value: str) -> int:
+    n = int(value)
+    if n <= 0:
+        raise argparse.ArgumentTypeError(
+            f"positive value expected but received: {value}"
+        )
+    return n
+
+
+# ============================================================
 # PARSER
 # ============================================================
 
@@ -128,7 +142,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser_split.add_argument(
         "-f",
         "--format",
-        type=str,
+        choices=["wav", "mp3", "ogg"],
         default="wav",
         metavar="FORMAT",
         help="Output audio format: 'wav' (default), 'mp3' or 'ogg'",
@@ -137,7 +151,7 @@ def build_parser() -> argparse.ArgumentParser:
     chapter_source.add_argument(
         "-p",
         "--parts",
-        type=int,
+        type=positive_int,
         default=4,
         metavar="N",
         help="Number of equally sized chapters to be created (default: 4)",

@@ -26,6 +26,8 @@ class ClfParser:
         r"(?:(?P<separator> - | )(?P<title>.+))?$"
     )
 
+    _ILLEGAL_SEPARATORS_RE = re.compile(r"[\v\f\x85\u2028\u2029]")
+
     def parse_file(self, path: str | PathLike[str]) -> ChapterList:
         """
         Read a CLF file from disk and return a normalized ChapterList.
@@ -81,8 +83,10 @@ class ClfParser:
         if text.startswith("\ufeff"):
             raise ClfParserError("CLF files must not contain a UTF-8 BOM.")
 
-        if "\r" in text.replace("\r\n", ""):
-            raise ClfParserError("CLF files must use LF or CRLF line endings.")
+        if self._ILLEGAL_SEPARATORS_RE.search(text):
+            raise ClfParserError(
+                "CLF files can contain only LF and CRLF line separators."
+            )
 
         lines = text.splitlines()
 

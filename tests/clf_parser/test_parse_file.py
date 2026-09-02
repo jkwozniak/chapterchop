@@ -45,3 +45,14 @@ def test_parse_file_rejects_bom_prefixed_clf_asset(
 
     with pytest.raises(ClfParserError):
         parser.parse_file(asset_path)
+
+
+@pytest.mark.unit
+def test_parse_file_rejects_invalid_line_separators_asset(
+    parser: ClfParser,
+    clf_asset,
+) -> None:
+    asset_path = clf_asset(ClfAsset.INVALID_ILLEGAL_LINE_SEPARATORS)
+
+    with pytest.raises(ClfParserError):
+        parser.parse_file(asset_path)
