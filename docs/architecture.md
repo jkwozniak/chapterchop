@@ -400,22 +400,7 @@ The CLI does not implement audio processing or domain logic.
 
 Chapterchop defines a small, explicit exception hierarchy centered around the `ChapterChopError` base class. The goal of the error model is to provide predictable public failure semantics while remaining independent from backend-specific exceptions.
 
-The project distinguishes between three broad categories of errors: domain model errors, processing constraint errors and component errors.
-
-
-### Domain model errors
-
-Domain model errors represent violations of domain model object invariants.
-These errors are independent from any specific backend or implementation detail.
-
-Examples include:
-* chapter entries with negative start positions,
-* unsorted chapter lists,
-* chapter lists containing duplicated chapter entries,
-* chapters with negative start positions,
-* chapters where `end_ms <= start_ms`.
-
-Domain model errors indicate globally invalid model state.
+The project distinguishes between two broad categories of errors: processing constraint errors and component errors.
 
 
 ### Processing constraint errors

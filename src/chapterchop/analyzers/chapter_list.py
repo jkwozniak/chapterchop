@@ -5,8 +5,6 @@ from ..audio_data.protocols import AudioData
 from ..exceptions import (
     AnalyzerError,
     ChapterListOutOfBoundsError,
-    InvalidChapterEntryError,
-    InvalidChapterListError,
 )
 from ..models import Chapter, ChapterList
 from .base import Analyzer
@@ -46,46 +44,6 @@ class ChapterListAnalyzer(Analyzer):
     _chapter_list: ChapterList
 
     def __init__(self, chapter_list: ChapterList) -> None:
-        """
-        Initialize a ChapterListAnalyzer with the provided ChapterList.
-
-        The ChapterList is validated when the analyzer is created.
-        Once created, the analyzer does not modify the provided
-        ChapterList.
-
-        Args:
-          - chapter_list (ChapterList): Chapter information describing
-            the audio content to be divided into chapters.
-
-        Raises:
-          - InvalidChapterListError: If the chapter_list violates the
-            invariants of ChapterList.
-          - InvalidChapterEntryError: If the chapter_list contains a
-            ChapterEntry that violates its invariants.
-
-        Semantic details:
-          - chapter_list must be a valid ChapterList
-          - the first ChapterEntry does not have to start at 0 ms
-        """
-        previous_start_ms: int | None = None
-        for entry in chapter_list.entries:
-            if entry.start_ms < 0:
-                raise InvalidChapterEntryError(
-                    "Chapter entry start time must be non-negative."
-                )
-            if entry.title == "":
-                raise InvalidChapterEntryError("Chapter entry title must not be empty.")
-            if entry.title is not None and type(entry.title) is not str:
-                raise InvalidChapterEntryError(
-                    "Chapter entry title must be str or None."
-                )
-            if previous_start_ms is not None and entry.start_ms <= previous_start_ms:
-                raise InvalidChapterListError(
-                    "Chapter entries must be sorted by start_ms "
-                    "and have unique timestamps."
-                )
-            previous_start_ms = entry.start_ms
-
         self._chapter_list = chapter_list
 
     def __repr__(self) -> str:

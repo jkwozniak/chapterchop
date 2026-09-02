@@ -21,3 +21,9 @@ class Chapter:
     end_ms: int
     title: str | None = None
     metadata: dict[str, object] | None = None
+
+    def __post_init__(self) -> None:
+        if self.start_ms < 0:
+            raise ValueError("Chapter start_ms cannot be negative.")
+        if self.end_ms <= self.start_ms:
+            raise ValueError("Chapter end_ms must be greater than start_ms.")

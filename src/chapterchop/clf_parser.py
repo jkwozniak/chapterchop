@@ -7,8 +7,6 @@ from pathlib import Path
 
 from .exceptions import (
     ClfParserError,
-    InvalidChapterEntryError,
-    InvalidChapterListError,
 )
 from .models.chapter_entry import ChapterEntry
 from .models.chapter_list import ChapterList
@@ -132,15 +130,13 @@ class ClfParser:
         """Validate parsed entries before constructing the final ChapterList."""
 
         if not entries:
-            raise InvalidChapterListError(
-                "ChapterList must contain at least one entry."
-            )
+            raise ClfParserError("ChapterList must contain at least one entry.")
 
         chapter_entries: list[ChapterEntry] = []
 
         for line_number, (start_ms, title) in enumerate(entries, start=1):
             if start_ms < 0:
-                raise InvalidChapterEntryError(
+                raise ClfParserError(
                     f"Chapter entry start time must be non-negative "
                     f"at line {line_number}."
                 )
@@ -150,7 +146,7 @@ class ClfParser:
         previous_start_ms = chapter_entries[0].start_ms
         for chapter_entry in chapter_entries[1:]:
             if chapter_entry.start_ms <= previous_start_ms:
-                raise InvalidChapterListError(
+                raise ClfParserError(
                     "Chapter entries must be sorted by start_ms "
                     "and have unique timestamps."
                 )

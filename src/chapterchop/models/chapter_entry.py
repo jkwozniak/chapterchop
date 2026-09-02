@@ -20,9 +20,13 @@ class ChapterEntry:
     Semantic details:
     - start_ms >= 0
     - title is None or non-empty string
-    - instances violating the above invariants are considered invalid
-      and should raise InvalidChapterEntryError when detected.
     """
 
     start_ms: int
     title: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.start_ms < 0:
+            raise ValueError("Chapter start cannot be negative.")
+        if self.title == "":
+            raise ValueError("Chapter title cannot be an empty string.")

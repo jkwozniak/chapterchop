@@ -22,8 +22,16 @@ class ChapterList:
     Semantic details:
     - chapter entries are sorted in ascending order by start_ms
     - each chapter entry must have a unique start_ms value
-    - instances violating the above invariants are considered invalid
-      and should raise InvalidChapterListError when detected.
     """
 
     entries: tuple[ChapterEntry, ...]
+
+    def __post_init__(self) -> None:
+        previous_start_ms: int | None = None
+        for entry in self.entries:
+            if previous_start_ms is not None and entry.start_ms <= previous_start_ms:
+                raise ValueError(
+                    "Chapter entries must be sorted by start_ms "
+                    "and have unique timestamps."
+                )
+            previous_start_ms = entry.start_ms

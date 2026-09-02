@@ -9,7 +9,6 @@ from ..exceptions import (
     ChapterOutOfBoundsError,
     ChapterOverlapError,
     CutterError,
-    InvalidChapterError,
     NonFullCoverageError,
 )
 from ..models import Chapter, Segment
@@ -55,8 +54,6 @@ class SimpleCutter(Cutter):
                 the audio duration.
           - ChapterOverlapError: If two or more chapters share the same
                 part of source audio.
-          - InvalidChapterError: If any of the chapters has invalid values
-                of start_ms or end_ms.
         """
 
         if not chapters:
@@ -122,17 +119,6 @@ class SimpleCutter(Cutter):
                     f"Duplicate chapter start_ms detected: {chapter.start_ms}."
                 )
             seen_starts.add(chapter.start_ms)
-
-            if chapter.start_ms < 0:
-                raise InvalidChapterError(
-                    f"Chapter start_ms must be >= 0 (got: {chapter.start_ms})."
-                )
-
-            if chapter.end_ms <= chapter.start_ms:
-                raise InvalidChapterError(
-                    f"Invalid chapter range:"
-                    f"[start_ms={chapter.start_ms}; end_ms={chapter.end_ms}]"
-                )
 
             if chapter.end_ms > duration_ms:
                 raise ChapterOutOfBoundsError(
