@@ -74,8 +74,7 @@ class ClfParser:
 
         lines = self._read_text(text)
         entries = self._parse_lines(lines)
-        chapter_entries = self._validate_entries(entries)
-        return self._build_chapter_list(chapter_entries)
+        return self._build_chapter_list(entries)
 
     def _read_text(self, text: str) -> list[str]:
         """Read and normalize the raw CLF text into a line list."""
@@ -95,10 +94,10 @@ class ClfParser:
 
         return lines
 
-    def _parse_lines(self, lines: list[str]) -> list[tuple[int, str | None]]:
+    def _parse_lines(self, lines: list[str]) -> tuple[ChapterEntry, ...]:
         """Parse each line of the CLF text into a normalized chapter entry."""
 
-        result: list[tuple[int, str | None]] = []
+        entries: list[ChapterEntry] = []
 
         for line_number, raw_line in enumerate(lines, start=1):
             normalized_line = raw_line.rstrip()
@@ -123,40 +122,12 @@ class ClfParser:
             timestamp = match.group("timestamp")
             start_ms = self._timestamp_to_ms(timestamp)
 
-            result.append((start_ms, title))
-
-        return result
-
-    def _validate_entries(
-        self,
-        entries: list[tuple[int, str | None]],
-    ) -> tuple[ChapterEntry, ...]:
-        """Validate parsed entries before constructing the final ChapterList."""
+            entries.append(ChapterEntry(start_ms=start_ms, title=title))
 
         if not entries:
             raise ClfParserError("ChapterList must contain at least one entry.")
 
-        chapter_entries: list[ChapterEntry] = []
-
-        for line_number, (start_ms, title) in enumerate(entries, start=1):
-            if start_ms < 0:
-                raise ClfParserError(
-                    f"Chapter entry start time must be non-negative "
-                    f"at line {line_number}."
-                )
-
-            chapter_entries.append(ChapterEntry(start_ms=start_ms, title=title))
-
-        previous_start_ms = chapter_entries[0].start_ms
-        for chapter_entry in chapter_entries[1:]:
-            if chapter_entry.start_ms <= previous_start_ms:
-                raise ClfParserError(
-                    "Chapter entries must be sorted by start_ms "
-                    "and have unique timestamps."
-                )
-            previous_start_ms = chapter_entry.start_ms
-
-        return tuple(chapter_entries)
+        return tuple(entries)
 
     def _build_chapter_list(
         self,

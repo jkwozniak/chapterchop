@@ -4,7 +4,6 @@
 import pytest
 
 from chapterchop import ClfParser
-from chapterchop.exceptions import ClfParserError
 from tests.support.factories.clf_texts import (
     make_invalid_non_increasing_timestamp_text,
 )
@@ -21,5 +20,5 @@ def test_parse_text_rejects_non_increasing_timestamps(
 ) -> None:
     text = make_invalid_non_increasing_timestamp_text()
 
-    with pytest.raises(ClfParserError):
+    with pytest.raises(ValueError):
         parser.parse_text(text)
