@@ -3,6 +3,8 @@
 
 from dataclasses import dataclass
 
+from frozendict import frozendict
+
 
 @dataclass(frozen=True, slots=True)
 class Chapter:
@@ -20,7 +22,7 @@ class Chapter:
     start_ms: int
     end_ms: int
     title: str | None = None
-    metadata: dict[str, object] | None = None
+    metadata: frozendict[str, str] = frozendict()
 
     def __post_init__(self) -> None:
         if self.start_ms < 0:
