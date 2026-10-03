@@ -101,6 +101,8 @@ ClfParser ──┘
 
 # 3. Data model
 
+> NOTE: Domain model invariants are validated in the __post_init__ method of the respective model. Other validations regarding data correctness in a specific processing context take place at the input of the processing components.
+
 ## AudioData
 
 **Language Construct:** typing.Protocol, runtime_checkable
@@ -178,7 +180,7 @@ Contains:
 - `start_ms: int`
 - `end_ms: int`
 - `title: str | None = None`
-- `metadata: dict[str, object] | None = None`
+- `metadata: frozendict[str, str] = frozendict()`
 
 Semantic details:
 - `start_ms` is inclusive
