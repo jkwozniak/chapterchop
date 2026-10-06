@@ -117,7 +117,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser_split = subparsers.add_parser(
         "split",
-        help="Split audio file into parts",
+        help="split audio file into parts",
         description=(
             "Analyze an audio file, split it into chapters, "
             "and write the resulting segments to disk."
@@ -129,7 +129,7 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="PATH",
         type=Path,
         required=True,
-        help="Path to the input audio file",
+        help="path to the input audio file",
     )
     parser_split.add_argument(
         "-o",
@@ -137,7 +137,7 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="PATH",
         type=Path,
         required=True,
-        help="Directory where output files will be written",
+        help="directory where output files will be written",
     )
     parser_split.add_argument(
         "-f",
@@ -145,7 +145,7 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["wav", "mp3", "ogg"],
         default="wav",
         metavar="FORMAT",
-        help="Output audio format: 'wav' (default), 'mp3' or 'ogg'",
+        help="output audio format: 'wav' (default), 'mp3' or 'ogg'",
     )
     chapter_source = parser_split.add_mutually_exclusive_group()
     chapter_source.add_argument(
@@ -154,19 +154,19 @@ def build_parser() -> argparse.ArgumentParser:
         type=positive_int,
         default=4,
         metavar="N",
-        help="Number of equally sized chapters to be created (default: 4)",
+        help="number of equally sized chapters to be created (default: 4)",
     )
     chapter_source.add_argument(
         "--clf",
         type=Path,
         metavar="PATH",
-        help="Path to the CLF file containing chapter information",
+        help="path to the CLF file containing chapter information",
     )
     parser_split.add_argument(
         "-v",
         "--verbose",
         action="store_true",
-        help="Show detailed processing information",
+        help="show detailed processing information",
     )
     parser_split.set_defaults(func=cmd_split)
 

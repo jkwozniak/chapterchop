@@ -4,7 +4,7 @@
 [![PyPI](https://img.shields.io/pypi/v/chapterchop)](https://pypi.org/project/chapterchop/)
 [![Python](https://img.shields.io/pypi/pyversions/chapterchop)](https://pypi.org/project/chapterchop/)
 
-Chapterchop — chop long audio into chapters as separate files convenient for offline listening.
+Chapterchop — split long audio recordings into separate chapter files for offline listening.
 
 > Chapterchop is currently in early development. The public API may evolve before the first stable 1.0 release.
 
@@ -44,37 +44,107 @@ You might find this tool useful if you:
 
 ### Prerequisites
 
-- Python 3.11+
-- [FFmpeg](https://www.ffmpeg.org/)
+Chapterchop requires:
 
+- Python 3.11 or later
+- FFmpeg
 
-### Install Chapterchop
+#### FFmpeg
 
+Chapterchop uses [FFmpeg](https://ffmpeg.org/) to read and process audio files.
+FFmpeg is a free and open-source multimedia framework that supports a wide range
+of audio and video formats.
+
+If you do not have FFmpeg installed, follow the installation instructions for
+your operating system in the [official FFmpeg documentation](https://ffmpeg.org/download.html).
+
+After installing FFmpeg, verify that it is available by running:
 ```bash
-pip install chapterchop
+ffmpeg -version
 ```
 
+### Install Chapterchop
+```
+pip install chapterchop
+```
 
 ## Usage
 
 ```bash
-chapterchop split [-h] -i PATH -o PATH [-p N] [-v]
+chapterchop split [--help] --input PATH --output PATH [--format FORMAT] [--parts N | --clf PATH] [--verbose]
 ```
+
+
+### Splitting methods
+
+Chapterchop supports two methods for splitting an audio file into chapters:
+
+* **Equal parts** — use `--parts N` to divide the audio into `N` equally sized chapters. If no splitting method is specified, Chapterchop uses this method with 4 chapters by default.
+* **CLF file** — use `--clf PATH` to split the audio according to chapter definitions provided in a [CLF file](https://github.com/jkwozniak/chapterchop/blob/main/docs/formats/clf-v1.md).
+
+These options are mutually exclusive. A single `split` command can use either `--parts` or `--clf`, but not both.
+
+
+### CLF files
+
+A CLF (Chapter List Format) file is a text file that specifies the starting points of chapters in an audio recording. Each line contains a chapter start time in milliseconds, optionally followed by a chapter title.
+
+For example:
+
+```text
+0 Introduction
+60000 Chapter One
+120000 Chapter Two
+```
+
+This defines three chapters:
+
+* `Introduction` starts at 0 ms,
+* `Chapter One` starts at 60,000 ms,
+* `Chapter Two` starts at 120,000 ms.
+
+Use the file with the `--clf` option:
+
+```bash
+chapterchop split -i input_file.mp3 -o ./output_dir --clf chapters.clf
+```
+
+For the complete CLF specification, see the [CLF v1 format specification](https://github.com/jkwozniak/chapterchop/blob/main/docs/formats/clf-v1.md).
+
+
 
 Options:
 ```
-  -h, --help              Show this help message and exit
-  -i PATH, --input PATH   Path to the input audio file
-
-  -o PATH, --output PATH  Directory where output files will be written
-
-  -p N, --parts N         Number of equally sized chapters to be created
-  -v, --verbose           Show detailed processing information
+options:
+  -h, --help                   show this help message and exit
+  -i PATH, --input PATH        path to the input audio file
+  -o PATH, --output PATH       directory where output files will be written
+  -f FORMAT, --format FORMAT   output audio format: 'wav' (default), 'mp3' or 'ogg'
+  -p N, --parts N              number of equally sized chapters to be created (default: 4)
+  --clf PATH                   path to the CLF file containing chapter information
+  -v, --verbose                show detailed processing information
 ```
 
-Sample usage: split the audio file into five equal parts
+### Sample usage
+
+**Split the audio file into four equal parts:**
 ```bash
-chapterchop split -i input_file.mp3 -o ~/Desktop/output_dir -p 5 -v
+chapterchop split -i input_file.mp3 -o .
+```
+
+**Split the audio file into 3 equal parts and export to the mp3 format:**
+```bash
+chapterchop split -i input_file.mp3 -o ./output_dir --parts 3 --format mp3
+```
+
+**Split the audio file into seven equal parts using verbose mode:**
+```bash
+chapterchop split -i input_file.mp3 -o ./output_dir --parts 7 --verbose
+```
+
+**Split audio based on a CLF file:**
+```bash
+chapterchop split -i input_file.mp3 -o ./output_dir --clf chapters.clf
 ```
 
 ## License
