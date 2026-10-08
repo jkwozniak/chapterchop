@@ -2,11 +2,11 @@
 # Copyright (c) 2026 Jan Woźniak
 
 import pytest
-
-from chapterchop import ClfParser
-from tests.support.factories.clf_texts import (
+from support.factories.clf_texts import (
     make_invalid_non_increasing_timestamp_text,
 )
+
+from chapterchop import ClfParser
 
 
 @pytest.fixture

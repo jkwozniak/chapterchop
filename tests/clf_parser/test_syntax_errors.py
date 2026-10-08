@@ -2,16 +2,16 @@
 # Copyright (c) 2026 Jan Woźniak
 
 import pytest
-
-from chapterchop import ClfParser
-from chapterchop.exceptions import ClfParserError
-from tests.support.assets.registry import ClfAsset
-from tests.support.factories.clf_texts import (
+from support.assets.registry import ClfAsset
+from support.factories.clf_texts import (
     make_invalid_leading_whitespace_text,
     make_invalid_line_carriage_return_text,
     make_invalid_separator_text,
     make_invalid_timestamp_format_text,
 )
+
+from chapterchop import ClfParser
+from chapterchop.exceptions import ClfParserError
 
 
 @pytest.fixture

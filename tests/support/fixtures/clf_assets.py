@@ -4,9 +4,8 @@
 from pathlib import Path
 
 import pytest
-
-from tests.support.assets.path_resolver import resolve
-from tests.support.assets.registry import ClfAsset
+from support.assets.path_resolver import resolve
+from support.assets.registry import ClfAsset
 
 
 @pytest.fixture

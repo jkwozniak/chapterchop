@@ -2,13 +2,13 @@
 # Copyright (c) 2026 Jan Woźniak
 
 import pytest
-
-from chapterchop import ClfParser
-from chapterchop.models import ChapterEntry, ChapterList
-from tests.support.factories.clf_texts import (
+from support.factories.clf_texts import (
     make_valid_timestamp_only_text,
     make_valid_timestamp_with_titles_text,
 )
+
+from chapterchop import ClfParser
+from chapterchop.models import ChapterEntry, ChapterList
 
 
 @pytest.fixture

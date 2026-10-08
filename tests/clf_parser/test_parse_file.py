@@ -2,10 +2,10 @@
 # Copyright (c) 2026 Jan Woźniak
 
 import pytest
+from support.assets.registry import ClfAsset
 
 from chapterchop import ClfParser
 from chapterchop.exceptions import ClfParserError
-from tests.support.assets.registry import ClfAsset
 
 
 @pytest.fixture

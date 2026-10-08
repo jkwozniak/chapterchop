@@ -2,16 +2,7 @@
 # Copyright (c) 2026 Jan Woźniak
 
 import pytest
-
-from chapterchop.cutters import SimpleCutter
-from chapterchop.exceptions import (
-    ChapterGapError,
-    ChapterOutOfBoundsError,
-    ChapterOverlapError,
-    CutterError,
-    NonFullCoverageError,
-)
-from tests.support.factories.chapters import (
+from support.factories.chapters import (
     make_duplicate_start,
     make_full_coverage,
     make_missing_start_zero,
@@ -20,9 +11,18 @@ from tests.support.factories.chapters import (
     make_with_gap,
     make_with_overlap,
 )
-from tests.support.stubs.audio_data import (
+from support.stubs.audio_data import (
     AudioDataStub,
     FailingAudioDataStub,
+)
+
+from chapterchop.cutters import SimpleCutter
+from chapterchop.exceptions import (
+    ChapterGapError,
+    ChapterOutOfBoundsError,
+    ChapterOverlapError,
+    CutterError,
+    NonFullCoverageError,
 )
 
 

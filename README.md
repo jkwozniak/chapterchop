@@ -17,6 +17,9 @@ Chapterchop — split long audio recordings into separate chapter files for offl
     - [Prerequisites](#prerequisites)
     - [Install Chapterchop](#install-chapterchop)
 - [Usage](#usage)
+    - [Splitting methods](#splitting-methods)
+    - [CLF files](#clf-files)
+    - [Examples](#examples)
 - [License](#license)
 
 
@@ -64,7 +67,7 @@ ffmpeg -version
 ```
 
 ### Install Chapterchop
-```
+```bash
 pip install chapterchop
 ```
 
@@ -87,21 +90,15 @@ These options are mutually exclusive. A single `split` command can use either `-
 
 ### CLF files
 
-A CLF (Chapter List Format) file is a text file that specifies the starting points of chapters in an audio recording. Each line contains a chapter start time in milliseconds, optionally followed by a chapter title.
+A CLF (Chapter List Format) file is a text file that specifies the starting points of chapters in an audio recording. Each line contains a chapter start time in `HH:MM:SS` or `MM:SS` format, optionally followed by a chapter title.
 
 For example:
 
 ```text
-0 Introduction
-60000 Chapter One
-120000 Chapter Two
+00:00 Introduction
+00:30 Chapter One
+03:00 Chapter Two
 ```
-
-This defines three chapters:
-
-* `Introduction` starts at 0 ms,
-* `Chapter One` starts at 60,000 ms,
-* `Chapter Two` starts at 120,000 ms.
 
 Use the file with the `--clf` option:
 
@@ -112,9 +109,8 @@ chapterchop split -i input_file.mp3 -o ./output_dir --clf chapters.clf
 For the complete CLF specification, see the [CLF v1 format specification](https://github.com/jkwozniak/chapterchop/blob/main/docs/formats/clf-v1.md).
 
 
-
 Options:
-```
+```text
 options:
   -h, --help                   show this help message and exit
   -i PATH, --input PATH        path to the input audio file
@@ -125,7 +121,7 @@ options:
   -v, --verbose                show detailed processing information
 ```
 
-### Sample usage
+### Examples
 
 **Split the audio file into four equal parts:**
 ```bash

@@ -6,11 +6,11 @@ from pathlib import Path
 
 import pytest
 from pytest import FixtureRequest
-
-from chapterchop.writers import DirectoryWriter, Writer
-from tests.support.factories.writers import (
+from support.factories.writers import (
     make_directory_writer,
 )
+
+from chapterchop.writers import DirectoryWriter, Writer
 
 WriterFactory = Callable[..., Writer]
 
