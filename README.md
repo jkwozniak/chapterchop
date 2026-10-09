@@ -83,7 +83,7 @@ chapterchop split [--help] --input PATH --output PATH [--format FORMAT] [--parts
 Chapterchop supports two methods for splitting an audio file into chapters:
 
 * **Equal parts** — use `--parts N` to divide the audio into `N` equally sized chapters. If no splitting method is specified, Chapterchop uses this method with 4 chapters by default.
-* **CLF file** — use `--clf PATH` to split the audio according to chapter definitions provided in a [CLF file](https://github.com/jkwozniak/chapterchop/blob/main/docs/formats/clf-v1.md).
+* **CLF file** — use `--clf PATH` to split the audio according to chapter definitions provided in a CLF file (see below).
 
 These options are mutually exclusive. A single `split` command can use either `--parts` or `--clf`, but not both.
 
@@ -103,10 +103,10 @@ For example:
 Use the file with the `--clf` option:
 
 ```bash
-chapterchop split -i input_file.mp3 -o ./output_dir --clf chapters.clf
+chapterchop split -i input_file.mp3 -o output_dir --clf chapters.clf
 ```
 
-For the complete CLF specification, see the [CLF v1 format specification](https://github.com/jkwozniak/chapterchop/blob/main/docs/formats/clf-v1.md).
+For details, see the [CLF v1 format specification](https://github.com/jkwozniak/chapterchop/blob/main/docs/formats/clf-v1.md).
 
 
 Options:
@@ -130,17 +130,17 @@ chapterchop split -i input_file.mp3 -o .
 
 **Split the audio file into 3 equal parts and export to the mp3 format:**
 ```bash
-chapterchop split -i input_file.mp3 -o ./output_dir --parts 3 --format mp3
+chapterchop split -i input_file.mp3 -o output_dir --parts 3 --format mp3
 ```
 
 **Split the audio file into seven equal parts using verbose mode:**
 ```bash
-chapterchop split -i input_file.mp3 -o ./output_dir --parts 7 --verbose
+chapterchop split -i input_file.mp3 -o output_dir --parts 7 --verbose
 ```
 
 **Split audio based on a CLF file:**
 ```bash
-chapterchop split -i input_file.mp3 -o ./output_dir --clf chapters.clf
+chapterchop split -i input_file.mp3 -o output_dir --clf chapters.clf
 ```
 
 ## License
