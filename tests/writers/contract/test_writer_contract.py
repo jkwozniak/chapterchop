@@ -5,16 +5,16 @@ from copy import deepcopy
 from pathlib import Path
 
 import pytest
+from support.factories.segments import (
+    make_segments,
+)
 from support.stubs.audio_data import (
     FailingWritableAudioDataStub,
     WritableAudioDataStub,
 )
 
 from chapterchop.exceptions import WriterError
-from chapterchop.writers.base import Writer
-from tests.support.factories.segments import (
-    make_segments,
-)
+from chapterchop.writers import Writer
 
 # ============================================================
 # GENERAL CONTRACT COMPLIANCE

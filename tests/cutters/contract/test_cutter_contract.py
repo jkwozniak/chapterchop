@@ -4,15 +4,15 @@
 from copy import deepcopy
 
 import pytest
-from support.stubs.audio_data import AudioDataStub, FailingAudioDataStub
-
-from chapterchop.cutters.base import Cutter
-from chapterchop.exceptions import CutterError
-from tests.support.factories.chapters import (
+from support.factories.chapters import (
     make_full_coverage,
     make_full_coverage_multiple_chapters,
     make_single,
 )
+from support.stubs.audio_data import AudioDataStub, FailingAudioDataStub
+
+from chapterchop.cutters import Cutter
+from chapterchop.exceptions import CutterError
 
 # ============================================================
 # GENERAL CONTRACT COMPLIANCE

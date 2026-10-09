@@ -7,11 +7,14 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import cast
 
-from chapterchop.analyzers.even_split import EvenSplitAnalyzer
-from chapterchop.audio_data.pydub import PydubAudioData
-from chapterchop.cutters.simple import SimpleCutter
-from chapterchop.exceptions import ChapterChopError
-from chapterchop.writers.directory import DirectoryWriter
+from ..analyzers.base import Analyzer
+from ..analyzers.chapter_list import ChapterListAnalyzer
+from ..analyzers.even_split import EvenSplitAnalyzer
+from ..audio_data.pydub import PydubAudioData
+from ..clf_parser import ClfParser
+from ..cutters.simple import SimpleCutter
+from ..exceptions import ChapterChopError
+from ..writers.directory import DirectoryWriter
 
 try:
     __version__ = version("chapterchop")
@@ -25,7 +28,10 @@ except PackageNotFoundError:
 
 def cmd_split(args: argparse.Namespace) -> int:
     if args.verbose:
-        print(f"Splitting {args.input} into {args.parts} parts")
+        if args.clf is not None:
+            print(f"Splitting {args.input} using chapters from {args.clf}")
+        else:
+            print(f"Splitting {args.input} into {args.parts} parts")
         print(f"Results will be written to the {args.output} directory")
 
     if args.verbose:
@@ -36,7 +42,12 @@ def cmd_split(args: argparse.Namespace) -> int:
     if args.verbose:
         print("Analyzing chapters...")
 
-    analyzer = EvenSplitAnalyzer(parts=args.parts)
+    analyzer: Analyzer
+    if args.clf is not None:
+        chapter_list = ClfParser().parse_file(path=args.clf)
+        analyzer = ChapterListAnalyzer(chapter_list=chapter_list)
+    else:
+        analyzer = EvenSplitAnalyzer(parts=args.parts)
     chapters = analyzer.analyze(audio=audio_data)
 
     if args.verbose:
@@ -60,6 +71,20 @@ def cmd_split(args: argparse.Namespace) -> int:
         print(f"Created {len(paths)} files")
 
     return 0
+
+
+# ============================================================
+# VALIDATION
+# ============================================================
+
+
+def positive_int(value: str) -> int:
+    n = int(value)
+    if n <= 0:
+        raise argparse.ArgumentTypeError(
+            f"positive value expected but received: {value}"
+        )
+    return n
 
 
 # ============================================================
@@ -92,7 +117,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser_split = subparsers.add_parser(
         "split",
-        help="Split audio file into parts",
+        help="split audio file into parts",
         description=(
             "Analyze an audio file, split it into chapters, "
             "and write the resulting segments to disk."
@@ -104,7 +129,7 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="PATH",
         type=Path,
         required=True,
-        help="Path to the input audio file",
+        help="path to the input audio file",
     )
     parser_split.add_argument(
         "-o",
@@ -112,29 +137,36 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="PATH",
         type=Path,
         required=True,
-        help="Directory where output files will be written",
+        help="directory where output files will be written",
     )
     parser_split.add_argument(
         "-f",
         "--format",
-        type=str,
+        choices=["wav", "mp3", "ogg"],
         default="wav",
         metavar="FORMAT",
-        help="Output audio format: 'wav' (default), 'mp3' or 'ogg'",
+        help="output audio format: 'wav' (default), 'mp3' or 'ogg'",
     )
-    parser_split.add_argument(
+    chapter_source = parser_split.add_mutually_exclusive_group()
+    chapter_source.add_argument(
         "-p",
         "--parts",
-        type=int,
+        type=positive_int,
         default=4,
         metavar="N",
-        help="Number of equally sized chapters to be created (default: 4)",
+        help="number of equally sized chapters to be created (default: 4)",
+    )
+    chapter_source.add_argument(
+        "--clf",
+        type=Path,
+        metavar="PATH",
+        help="path to the CLF file containing chapter information",
     )
     parser_split.add_argument(
         "-v",
         "--verbose",
         action="store_true",
-        help="Show detailed processing information",
+        help="show detailed processing information",
     )
     parser_split.set_defaults(func=cmd_split)
 

@@ -4,7 +4,7 @@
 import pytest
 from support.stubs.audio_data import AudioDataStub, FailingAudioDataStub
 
-from chapterchop.analyzers.base import Analyzer
+from chapterchop.analyzers import Analyzer
 from chapterchop.exceptions import AnalyzerError
 from chapterchop.models import Chapter
 

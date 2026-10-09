@@ -5,6 +5,10 @@ from collections.abc import Callable
 from pathlib import Path
 
 import pytest
+from support.factories.segments import (
+    make_segments,
+    make_segments_mixed_writability,
+)
 from support.stubs.audio_data import (
     AudioDataStub,
     FailingWritableAudioDataStub,
@@ -12,11 +16,7 @@ from support.stubs.audio_data import (
 )
 
 from chapterchop.exceptions import WriterError
-from chapterchop.writers.directory import DirectoryWriter
-from tests.support.factories.segments import (
-    make_segments,
-    make_segments_mixed_writability,
-)
+from chapterchop.writers import DirectoryWriter
 
 
 @pytest.mark.unit

@@ -3,10 +3,10 @@
 
 from pathlib import Path
 
-from chapterchop.audio_data.protocols import AudioData, WritableAudioData
-from chapterchop.exceptions import WriterError
-from chapterchop.models import Segment
-from chapterchop.writers.base import Writer
+from ..audio_data.protocols import AudioData, WritableAudioData
+from ..exceptions import WriterError
+from ..models import Segment
+from .base import Writer
 
 
 class DirectoryWriter(Writer):

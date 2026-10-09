@@ -6,7 +6,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Protocol, runtime_checkable
 
-from chapterchop.models import Segment
+from ..models import Segment
 
 
 @runtime_checkable

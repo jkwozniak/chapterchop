@@ -3,15 +3,18 @@
 
 from collections.abc import Callable
 
-from chapterchop.analyzers.base import Analyzer
-from tests.support.factories.analyzers import (
+from support.factories.analyzers import (
+    make_chapter_list_analyzer,
     make_even_split_analyzer,
 )
-from tests.support.fixtures.helpers import simple_parametrized_fixture_factory
+from support.fixtures.helpers import simple_parametrized_fixture_factory
+
+from chapterchop.analyzers import Analyzer
 
 AnalyzerFactory = Callable[[], Analyzer]
 
 ANALYZER_FACTORIES: list[AnalyzerFactory] = [
+    make_chapter_list_analyzer,
     make_even_split_analyzer,
 ]
 

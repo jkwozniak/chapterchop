@@ -3,7 +3,7 @@
 
 from pathlib import Path
 
-from chapterchop.writers.directory import DirectoryWriter
+from chapterchop.writers import DirectoryWriter
 
 
 def make_directory_writer(output_dir: Path, format: str) -> DirectoryWriter:

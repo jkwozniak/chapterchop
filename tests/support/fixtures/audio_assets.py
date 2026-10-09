@@ -4,9 +4,8 @@
 from pathlib import Path
 
 import pytest
-
-from tests.support.assets.path_resolver import resolve
-from tests.support.assets.registry import AudioAsset
+from support.assets.path_resolver import resolve
+from support.assets.registry import AudioAsset
 
 
 @pytest.fixture

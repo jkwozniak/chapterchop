@@ -6,12 +6,11 @@ from pathlib import Path
 
 import pytest
 from pytest import FixtureRequest
-
-from chapterchop.writers.base import Writer
-from chapterchop.writers.directory import DirectoryWriter
-from tests.support.factories.writers import (
+from support.factories.writers import (
     make_directory_writer,
 )
+
+from chapterchop.writers import DirectoryWriter, Writer
 
 WriterFactory = Callable[..., Writer]
 
@@ -22,6 +21,7 @@ WRITER_FACTORIES: list[WriterFactory] = [
 DEFAULT_EXPORT_FORMAT = "wav"
 
 
+# basic writer fixture for contract tests
 @pytest.fixture(params=WRITER_FACTORIES)
 def writer(
     request: FixtureRequest,
@@ -31,6 +31,8 @@ def writer(
     return factory(path=tmp_path, format=DEFAULT_EXPORT_FORMAT)
 
 
+# additional fixture for DirectoryWriter implementation tests
+# allows to set a custom output path for selected test cases
 @pytest.fixture
 def directory_writer_factory(
     tmp_path: Path,

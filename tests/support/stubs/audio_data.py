@@ -8,7 +8,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Self
 
-from chapterchop.audio_data.protocols import AudioData, WritableAudioData
+from chapterchop.audio_data import AudioData, WritableAudioData
 from chapterchop.exceptions import AudioBackendError
 
 

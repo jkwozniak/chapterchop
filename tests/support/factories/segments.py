@@ -5,7 +5,7 @@ from collections.abc import Callable
 
 from support.stubs.audio_data import AudioDataStub, WritableAudioDataStub
 
-from chapterchop.audio_data.protocols import AudioData
+from chapterchop.audio_data import AudioData
 from chapterchop.models import Chapter, Segment
 
 

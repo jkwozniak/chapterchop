@@ -7,21 +7,6 @@ class ChapterChopError(Exception):
 
 
 # ---------------------------------------------------------------------------
-# Domain model errors
-#
-# Raised when a domain model object breaks its own fundamental rules.
-# These errors indicate globally invalid model state.
-# ---------------------------------------------------------------------------
-
-
-class InvalidChapterError(ChapterChopError):
-    """
-    Raised when a chapter has invalid time values
-    (e.g. start_ms < 0 or start_ms >= end_ms).
-    """
-
-
-# ---------------------------------------------------------------------------
 # Processing constraint errors
 #
 # Raised when otherwise valid data violates semantic constraints
@@ -58,6 +43,13 @@ class NonFullCoverageError(ChapterChopError):
     """
 
 
+class ChapterListOutOfBoundsError(ChapterChopError):
+    """
+    Raised when a chapter list contains one or more chapter entries
+    that start outside the source audio.
+    """
+
+
 # ---------------------------------------------------------------------------
 # Operational component errors
 #
@@ -79,3 +71,10 @@ class WriterError(ChapterChopError):
 
 class AudioBackendError(ChapterChopError):
     """Raised when an audio backend returns invalid or inconsistent data."""
+
+
+class ClfParserError(ChapterChopError):
+    """
+    Raised when a CLF file content is not compliant
+    with the CLF specification.
+    """

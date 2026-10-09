@@ -3,6 +3,6 @@
 
 import sys
 
-from chapterchop.cli.main import main
+from .cli.main import main
 
 sys.exit(main())

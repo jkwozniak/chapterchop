@@ -3,8 +3,7 @@
 
 from dataclasses import dataclass
 
-from chapterchop.audio_data.protocols import AudioData
-
+from ..audio_data.protocols import AudioData
 from .chapter import Chapter
 
 

@@ -2,29 +2,27 @@
 # Copyright (c) 2026 Jan Woźniak
 
 import pytest
-
-from chapterchop.cutters.simple import SimpleCutter
-from chapterchop.exceptions import (
-    ChapterGapError,
-    ChapterOutOfBoundsError,
-    ChapterOverlapError,
-    CutterError,
-    InvalidChapterError,
-    NonFullCoverageError,
-)
-from tests.support.factories.chapters import (
+from support.factories.chapters import (
     make_duplicate_start,
     make_full_coverage,
-    make_invalid_range,
     make_missing_start_zero,
     make_not_full_coverage,
     make_out_of_bounds,
     make_with_gap,
     make_with_overlap,
 )
-from tests.support.stubs.audio_data import (
+from support.stubs.audio_data import (
     AudioDataStub,
     FailingAudioDataStub,
+)
+
+from chapterchop.cutters import SimpleCutter
+from chapterchop.exceptions import (
+    ChapterGapError,
+    ChapterOutOfBoundsError,
+    ChapterOverlapError,
+    CutterError,
+    NonFullCoverageError,
 )
 
 
@@ -89,17 +87,6 @@ def test_cut_rejects_duplicate_chapter_starts(
     chapters = make_duplicate_start(100)
 
     with pytest.raises(ChapterOverlapError):
-        cutter.cut(audio_data, chapters)
-
-
-@pytest.mark.unit
-def test_cut_rejects_invalid_chapter_ranges(
-    cutter: SimpleCutter,
-) -> None:
-    audio_data = AudioDataStub(100)
-    chapters = make_invalid_range()
-
-    with pytest.raises(InvalidChapterError):
         cutter.cut(audio_data, chapters)
 
 

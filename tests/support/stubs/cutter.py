@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2026 Jan Woźniak
 
-from chapterchop.audio_data.protocols import AudioData
-from chapterchop.cutters.base import Cutter
+from chapterchop.audio_data import AudioData
+from chapterchop.cutters import Cutter
 from chapterchop.models import Chapter, Segment
 
 

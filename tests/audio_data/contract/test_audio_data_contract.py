@@ -3,7 +3,7 @@
 
 import pytest
 
-from chapterchop.audio_data.protocols import AudioData
+from chapterchop.audio_data import AudioData
 
 # ============================================================
 # GENERAL CONTRACT COMPLIANCE
