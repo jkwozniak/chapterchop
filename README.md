@@ -109,7 +109,7 @@ chapterchop split -i input_file.mp3 -o output_dir --clf chapters.clf
 For details, see the [CLF v1 format specification](https://github.com/jkwozniak/chapterchop/blob/main/docs/formats/clf-v1.md).
 
 
-### `Split` command options
+### `split` command options
 ```text
   -h, --help                   show this help message and exit
   -i PATH, --input PATH        path to the input audio file
