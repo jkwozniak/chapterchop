@@ -73,10 +73,6 @@ def make_single(duration: int) -> list[Chapter]:
 # ---------------------------------------------------------------------------
 
 
-def make_invalid_range() -> list[Chapter]:
-    return [Chapter(10, 5)]
-
-
 def make_out_of_bounds(duration: int) -> list[Chapter]:
     return [Chapter(0, duration + 1)]
 

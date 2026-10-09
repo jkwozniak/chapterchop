@@ -3,11 +3,12 @@
 
 from collections.abc import Callable
 
-from chapterchop.cutters import Cutter
-from tests.support.factories.cutters import (
+from support.factories.cutters import (
     make_simple_cutter,
 )
-from tests.support.fixtures.helpers import simple_parametrized_fixture_factory
+from support.fixtures.helpers import simple_parametrized_fixture_factory
+
+from chapterchop.cutters import Cutter
 
 CutterFactory = Callable[[], Cutter]
 

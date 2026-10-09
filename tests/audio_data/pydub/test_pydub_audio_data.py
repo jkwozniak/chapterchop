@@ -8,15 +8,15 @@ from pydub.exceptions import (
     CouldntDecodeError,
     CouldntEncodeError,
 )
-
-from chapterchop.audio_data import PydubAudioData
-from chapterchop.exceptions import AudioBackendError
-from tests.support.assets.path_resolver import resolve
-from tests.support.assets.registry import AudioAsset
-from tests.support.fakes.pydub_segments import (
+from support.assets.path_resolver import resolve
+from support.assets.registry import AudioAsset
+from support.fakes.pydub_segments import (
     FailingExportSegment,
     FailingSliceSegment,
 )
+
+from chapterchop.audio_data import PydubAudioData
+from chapterchop.exceptions import AudioBackendError
 
 # ============================================================
 # GENERAL CONTRACT COMPLIANCE

@@ -9,8 +9,6 @@ from chapterchop.analyzers.chapter_list import ChapterListAnalyzer
 from chapterchop.exceptions import (
     AnalyzerError,
     ChapterListOutOfBoundsError,
-    InvalidChapterEntryError,
-    InvalidChapterListError,
 )
 
 
@@ -35,30 +33,6 @@ def test_init_accepts_chapter_list_whose_first_entry_does_not_start_at_zero() ->
     analyzer = ChapterListAnalyzer(make_chapter_list((100, "Chapter")))
 
     assert isinstance(analyzer, ChapterListAnalyzer)
-
-
-@pytest.mark.unit
-def test_init_rejects_chapter_entry_with_invalid_timestamp() -> None:
-    with pytest.raises(InvalidChapterEntryError):
-        ChapterListAnalyzer(make_chapter_list((-1, "Invalid")))
-
-
-@pytest.mark.unit
-def test_init_rejects_chapter_entry_with_invalid_title() -> None:
-    with pytest.raises(InvalidChapterEntryError):
-        ChapterListAnalyzer(make_chapter_list((0, 123)))  # pyright: ignore[reportArgumentType]
-
-
-@pytest.mark.unit
-def test_init_rejects_unsorted_chapter_list() -> None:
-    with pytest.raises(InvalidChapterListError):
-        ChapterListAnalyzer(make_chapter_list((100, "Second"), (0, "First")))
-
-
-@pytest.mark.unit
-def test_init_rejects_duplicate_start_times() -> None:
-    with pytest.raises(InvalidChapterListError):
-        ChapterListAnalyzer(make_chapter_list((0, "First"), (0, "Second")))
 
 
 @pytest.mark.unit

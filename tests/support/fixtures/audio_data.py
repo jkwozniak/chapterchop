@@ -4,12 +4,12 @@
 from collections.abc import Callable
 
 import pytest
-
-from chapterchop.audio_data import AudioData, PydubAudioData
-from tests.support.factories.audio_data import (
+from support.factories.audio_data import (
     make_pydub_audio_data,
 )
-from tests.support.fixtures.helpers import simple_parametrized_fixture_factory
+from support.fixtures.helpers import simple_parametrized_fixture_factory
+
+from chapterchop.audio_data import AudioData, PydubAudioData
 
 AudioDataFactory = Callable[[], AudioData]
 

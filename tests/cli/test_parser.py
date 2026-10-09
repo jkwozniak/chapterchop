@@ -145,3 +145,43 @@ def test_split_rejects_parts_and_clf_together(
                 "chapters.clf",
             ]
         )
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize("parts", ["0", "-1"])
+def test_split_rejects_non_positive_parts(
+    parser: argparse.ArgumentParser,
+    parts: str,
+) -> None:
+    with pytest.raises(SystemExit):
+        parser.parse_args(
+            [
+                "split",
+                "--input",
+                "input.mp3",
+                "--output",
+                "output",
+                "--parts",
+                parts,
+            ]
+        )
+
+
+@pytest.mark.unit
+def test_split_rejects_invalid_format(
+    parser: argparse.ArgumentParser,
+) -> None:
+    with pytest.raises(SystemExit):
+        parser.parse_args(
+            [
+                "split",
+                "--input",
+                "input.mp3",
+                "--output",
+                "output",
+                "--parts",
+                "3",
+                "--format",
+                "flac",
+            ]
+        )

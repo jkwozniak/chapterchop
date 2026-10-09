@@ -7,36 +7,6 @@ class ChapterChopError(Exception):
 
 
 # ---------------------------------------------------------------------------
-# Domain model errors
-#
-# Raised when a domain model object breaks its own fundamental rules.
-# These errors indicate globally invalid model state.
-# ---------------------------------------------------------------------------
-
-
-class InvalidChapterError(ChapterChopError):
-    """
-    Raised when a chapter has invalid time values
-    (e.g. start_ms < 0 or start_ms >= end_ms).
-    """
-
-
-class InvalidChapterEntryError(ChapterChopError):
-    """
-    Raised when a chapter entry violates its invariants
-    (e.g. start_ms < 0 or title is an empty string).
-    """
-
-
-class InvalidChapterListError(ChapterChopError):
-    """
-    Raised when a chapter list violates its invariants
-    (e.g. entries are not sorted by start_ms
-    or contain duplicate start_ms values).
-    """
-
-
-# ---------------------------------------------------------------------------
 # Processing constraint errors
 #
 # Raised when otherwise valid data violates semantic constraints

@@ -4,15 +4,15 @@
 import textwrap
 
 import pytest
-
-from chapterchop import ClfParser
-from chapterchop.models import ChapterEntry
-from tests.support.assets.registry import ClfAsset
-from tests.support.factories.clf_texts import (
+from support.assets.registry import ClfAsset
+from support.factories.clf_texts import (
     make_invalid_trailing_whitespace_text,
     make_valid_timestamp_only_text,
     make_valid_timestamp_with_titles_text,
 )
+
+from chapterchop import ClfParser
+from chapterchop.models import ChapterEntry
 
 
 @pytest.fixture

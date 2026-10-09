@@ -3,7 +3,7 @@
 
 from pathlib import Path
 
-from tests.support.assets.registry import TestAsset
+from support.assets.registry import TestAsset
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 ASSETS_ROOT = PROJECT_ROOT / "tests" / "assets"

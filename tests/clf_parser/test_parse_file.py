@@ -2,10 +2,10 @@
 # Copyright (c) 2026 Jan Woźniak
 
 import pytest
+from support.assets.registry import ClfAsset
 
 from chapterchop import ClfParser
 from chapterchop.exceptions import ClfParserError
-from tests.support.assets.registry import ClfAsset
 
 
 @pytest.fixture
@@ -42,6 +42,17 @@ def test_parse_file_rejects_bom_prefixed_clf_asset(
     clf_asset,
 ) -> None:
     asset_path = clf_asset(ClfAsset.INVALID_UTF8_WITH_BOM)
+
+    with pytest.raises(ClfParserError):
+        parser.parse_file(asset_path)
+
+
+@pytest.mark.unit
+def test_parse_file_rejects_invalid_line_separators_asset(
+    parser: ClfParser,
+    clf_asset,
+) -> None:
+    asset_path = clf_asset(ClfAsset.INVALID_ILLEGAL_LINE_SEPARATORS)
 
     with pytest.raises(ClfParserError):
         parser.parse_file(asset_path)
